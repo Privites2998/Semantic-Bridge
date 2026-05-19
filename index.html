@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#faf7f2" />
+<title>Semantic Bridge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #faf7f2;
+    --bg-soft: #f3eee5;
+    --ink: #1c1c1c;
+    --ink-soft: #4a4a4a;
+    --ink-dim: #888272;
+    --line: #d8d2c4;
+    --line-strong: #b8b0a0;
+    --accent: #2e7d5b;
+    --accent-soft: #d9ebe2;
+    --accent-dark: #1d5640;
+    --warn: #b94a3a;
+    --warn-soft: #f3dcd5;
+    --gold: #c89b3c;
+    --pill-bg: #ffffff;
+    --shadow: 0 1px 2px rgba(28,28,28,0.06), 0 4px 10px rgba(28,28,28,0.05);
+    --shadow-lg: 0 4px 24px rgba(28,28,28,0.10);
+    --radius: 8px;
+    --radius-lg: 14px;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0; background: var(--bg); color: var(--ink);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh; font-size: 16px; line-height: 1.5;
+  }
+  body { padding: 24px 20px 64px; }
+  a { color: var(--accent); }
+
+  /* HEADER */
+  .hdr {
+    max-width: 640px; margin: 0 auto 20px;
+    text-align: center; padding-bottom: 18px;
+    border-bottom: 1px solid var(--line);
+    position: relative;
+  }
+  .title {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 700; font-size: 36px; letter-spacing: -0.01em;
+    color: var(--ink); margin: 0;
+    font-variation-settings: 'opsz' 96;
+  }
+  .subtitle {
+    font-size: 13px; color: var(--ink-dim); margin-top: 6px;
+    letter-spacing: 0.04em;
+  }
+  .icon-btn {
+    position: absolute; top: 0; right: 0;
+    background: transparent; border: none; cursor: pointer;
+    padding: 6px; color: var(--ink-soft); border-radius: 50%;
+    transition: background 0.15s, color 0.15s;
+  }
+  .icon-btn:hover { background: var(--bg-soft); color: var(--ink); }
+  .icon-btn.left { right: auto; left: 0; }
+  .icon-btn svg { width: 22px; height: 22px; display: block; }
+
+  /* MAIN GAME */
+  .game { max-width: 640px; margin: 0 auto; }
+
+  .bridge-row {
+    display: grid; grid-template-columns: 1fr auto 1fr;
+    gap: 18px; align-items: center; margin: 32px 0 28px;
+  }
+  .word-end {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+  }
+  .word-end .label {
+    font-size: 10px; letter-spacing: 0.22em; color: var(--ink-dim);
+    text-transform: uppercase; font-weight: 600;
+  }
+  .word-end .word {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 700; font-size: 28px;
+    padding: 12px 22px; background: var(--ink); color: var(--bg);
+    border-radius: var(--radius); letter-spacing: 0.01em;
+    font-variation-settings: 'opsz' 60;
+    box-shadow: var(--shadow);
+  }
+  .word-end.end .word { background: var(--accent); }
+  .bridge-mid {
+    height: 2px; background: var(--line-strong);
+    position: relative; align-self: center;
+    min-width: 30px;
+  }
+  .bridge-mid::before, .bridge-mid::after {
+    content: ''; position: absolute; top: -3px;
+    width: 8px; height: 8px; background: var(--line-strong);
+    border-radius: 50%;
+  }
+  .bridge-mid::before { left: -4px; }
+  .bridge-mid::after  { right: -4px; }
+
+  /* CHAIN */
+  .chain {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    justify-content: center; align-items: center;
+    margin: 24px 0 20px; min-height: 56px;
+    padding: 6px;
+  }
+  .chain-empty {
+    color: var(--ink-dim); font-style: italic; font-size: 14px;
+    padding: 14px;
+  }
+  .link {
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .pill {
+    background: var(--pill-bg); border: 1px solid var(--line);
+    padding: 9px 16px; border-radius: 999px;
+    font-family: 'JetBrains Mono', monospace; font-weight: 500;
+    font-size: 14px; letter-spacing: 0.01em; color: var(--ink);
+    box-shadow: var(--shadow);
+    animation: pill-in 0.35s cubic-bezier(.34,1.56,.64,1);
+    position: relative;
+  }
+  .pill.start { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .pill.end { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .pill.valid { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-dark); }
+  .pill.elegant { border-color: var(--gold); background: #fdf6e3; color: #6e4d18; box-shadow: 0 0 0 2px rgba(200,155,60,0.18), var(--shadow); }
+  .pill .remove {
+    margin-left: 4px; cursor: pointer; opacity: 0.45; font-size: 12px;
+    line-height: 1; padding: 2px;
+  }
+  .pill .remove:hover { opacity: 1; }
+  .arrow {
+    color: var(--line-strong); font-size: 14px; user-select: none;
+  }
+  @keyframes pill-in {
+    0%   { opacity: 0; transform: translateY(8px) scale(0.85); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes shake {
+    10%, 90% { transform: translateX(-1px); }
+    20%, 80% { transform: translateX(2px); }
+    30%, 50%, 70% { transform: translateX(-4px); }
+    40%, 60% { transform: translateX(4px); }
+  }
+  .shake { animation: shake 0.4s; }
+
+  /* INPUT AREA */
+  .input-row {
+    display: grid; grid-template-columns: 1fr auto;
+    gap: 8px; margin: 0 auto 4px; max-width: 480px;
+  }
+  .word-input {
+    background: var(--pill-bg); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 12px 16px;
+    font-family: 'JetBrains Mono', monospace; font-size: 15px;
+    color: var(--ink); outline: none; transition: border-color 0.15s, box-shadow 0.15s;
+    text-transform: lowercase; letter-spacing: 0.02em;
+  }
+  .word-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .add-btn {
+    background: var(--ink); color: var(--bg); border: none;
+    padding: 12px 22px; border-radius: var(--radius);
+    font-family: 'Inter', sans-serif; font-weight: 600;
+    font-size: 14px; cursor: pointer; transition: background 0.15s, opacity 0.15s;
+    letter-spacing: 0.04em;
+  }
+  .add-btn:hover { background: var(--accent-dark); }
+  .add-btn:disabled { background: var(--ink-dim); cursor: not-allowed; opacity: 0.6; }
+  .input-msg {
+    text-align: center; font-size: 12px; min-height: 18px;
+    color: var(--ink-dim); margin-top: 6px; margin-bottom: 18px;
+  }
+  .input-msg.err { color: var(--warn); }
+  .input-msg.ok  { color: var(--accent); }
+  .input-msg.loading::after {
+    content: ''; display: inline-block; width: 8px; height: 8px;
+    margin-left: 6px; border-radius: 50%; background: var(--ink-dim);
+    animation: ld 1s infinite;
+  }
+  @keyframes ld {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 1; }
+  }
+
+  /* PROGRESS / STATS */
+  .progress {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px; max-width: 480px; margin: 0 auto 16px;
+    text-align: center;
+  }
+  .progress > div {
+    background: var(--pill-bg); border: 1px solid var(--line);
+    padding: 10px 12px; border-radius: var(--radius);
+  }
+  .progress span {
+    display: block; font-size: 10px; letter-spacing: 0.18em;
+    color: var(--ink-dim); text-transform: uppercase; font-weight: 600;
+  }
+  .progress strong {
+    display: block; font-family: 'Fraunces', serif; font-weight: 600;
+    font-size: 22px; color: var(--ink); margin-top: 2px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ACTIONS */
+  .actions {
+    display: flex; gap: 10px; justify-content: center;
+    margin-top: 22px; flex-wrap: wrap;
+  }
+  .btn {
+    background: var(--pill-bg); color: var(--ink);
+    border: 1px solid var(--line); padding: 10px 18px;
+    border-radius: var(--radius); font-family: inherit;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    letter-spacing: 0.04em; transition: all 0.15s;
+  }
+  .btn:hover { background: var(--bg-soft); border-color: var(--line-strong); }
+  .btn.primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .btn.primary:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+  .btn.danger { color: var(--warn); border-color: var(--warn-soft); }
+  .btn.danger:hover { background: var(--warn-soft); }
+
+  /* COMPLETION OVERLAY */
+  .complete {
+    max-width: 640px; margin: 32px auto 0;
+    background: var(--pill-bg); border: 1px solid var(--line);
+    border-radius: var(--radius-lg); padding: 28px 24px;
+    text-align: center; box-shadow: var(--shadow-lg);
+    animation: pill-in 0.5s;
+  }
+  .complete h2 {
+    font-family: 'Fraunces', serif; font-weight: 700; font-size: 26px;
+    margin: 0 0 6px; color: var(--accent-dark);
+  }
+  .complete p { margin: 0 0 18px; color: var(--ink-soft); font-size: 14px; }
+  .stars {
+    font-size: 28px; letter-spacing: 0.1em; margin-bottom: 14px;
+    color: var(--gold);
+  }
+  .star-off { color: var(--line); }
+  .summary-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    margin: 16px 0 18px;
+  }
+  .summary-grid > div {
+    background: var(--bg-soft); padding: 10px 14px;
+    border-radius: var(--radius); text-align: left;
+  }
+  .summary-grid span { font-size: 10px; letter-spacing: 0.18em; color: var(--ink-dim); text-transform: uppercase; font-weight: 600; }
+  .summary-grid strong { display: block; font-family: 'Fraunces', serif; font-size: 22px; color: var(--ink); margin-top: 2px; font-variant-numeric: tabular-nums; }
+
+  /* MODAL */
+  .modal-bg {
+    position: fixed; inset: 0; background: rgba(28,28,28,0.5);
+    backdrop-filter: blur(4px); z-index: 100;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px; animation: fade-in 0.2s;
+  }
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+  .modal {
+    background: var(--bg); border-radius: var(--radius-lg);
+    padding: 32px 28px; max-width: 520px; width: 100%;
+    box-shadow: var(--shadow-lg); max-height: 90vh; overflow: auto;
+    position: relative;
+  }
+  .modal h2 {
+    font-family: 'Fraunces', serif; font-weight: 700; font-size: 26px;
+    margin: 0 0 18px; color: var(--ink);
+  }
+  .modal h3 {
+    font-family: 'Fraunces', serif; font-weight: 600; font-size: 16px;
+    margin: 18px 0 8px; color: var(--ink);
+  }
+  .modal p { font-size: 14px; color: var(--ink-soft); line-height: 1.65; margin: 0 0 12px; }
+  .modal .close {
+    position: absolute; top: 16px; right: 16px;
+    background: none; border: none; cursor: pointer;
+    font-size: 24px; color: var(--ink-soft); padding: 4px;
+    line-height: 1;
+  }
+  .modal .close:hover { color: var(--ink); }
+  .modal .example {
+    background: var(--bg-soft); padding: 12px 14px; border-radius: var(--radius);
+    font-family: 'JetBrains Mono', monospace; font-size: 13px;
+    color: var(--ink); margin: 6px 0 12px;
+  }
+
+  /* FOOTER */
+  .footer {
+    max-width: 640px; margin: 40px auto 0;
+    text-align: center; font-size: 11px; color: var(--ink-dim);
+    letter-spacing: 0.04em;
+  }
+  .footer a { color: var(--ink-soft); text-decoration: none; border-bottom: 1px solid var(--line); }
+  .footer a:hover { color: var(--ink); }
+
+  /* CONFETTI */
+  .confetti {
+    position: fixed; pointer-events: none; top: 0; left: 0;
+    width: 100%; height: 100%; z-index: 50; overflow: hidden;
+  }
+  .confetti span {
+    position: absolute; width: 8px; height: 8px;
+    animation: fall 2.4s linear forwards;
+    opacity: 0.9;
+  }
+  @keyframes fall {
+    0%   { transform: translateY(-20vh) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(120vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* MOBILE */
+  @media (max-width: 520px) {
+    body { padding: 16px 14px 64px; }
+    .title { font-size: 28px; }
+    .word-end .word { font-size: 22px; padding: 10px 16px; }
+    .bridge-row { gap: 10px; }
+    .progress { grid-template-columns: 1fr 1fr; }
+    .progress > div:last-child { grid-column: 1 / -1; }
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: var(--ink); color: var(--bg); padding: 10px 18px;
+    border-radius: var(--radius); font-size: 13px; font-weight: 500;
+    z-index: 200; box-shadow: var(--shadow-lg);
+    animation: toast-in 0.3s;
+  }
+  @keyframes toast-in {
+    from { opacity: 0; transform: translate(-50%, 12px); }
+    to   { opacity: 1; transform: translate(-50%, 0); }
+  }
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <button class="icon-btn left" id="help-btn" aria-label="How to play" title="How to play">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+      <line x1="12" y1="17" x2="12.01" y2="17"/>
+    </svg>
+  </button>
+  <h1 class="title">Semantic Bridge</h1>
+  <div class="subtitle" id="subtitle">Daily Puzzle · loading…</div>
+  <button class="icon-btn" id="stats-btn" aria-label="Stats" title="Stats">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="18" y1="20" x2="18" y2="10"/>
+      <line x1="12" y1="20" x2="12" y2="4"/>
+      <line x1="6" y1="20" x2="6" y2="14"/>
+    </svg>
+  </button>
+</header>
+
+<main class="game">
+  <div class="bridge-row">
+    <div class="word-end start">
+      <div class="label">START</div>
+      <div class="word" id="start-word">—</div>
+    </div>
+    <div class="bridge-mid"></div>
+    <div class="word-end end">
+      <div class="label">END</div>
+      <div class="word" id="end-word">—</div>
+    </div>
+  </div>
+
+  <div class="chain" id="chain"></div>
+
+  <div class="input-row">
+    <input type="text" class="word-input" id="word-input"
+      placeholder="next word…" autocomplete="off" autocapitalize="off"
+      autocorrect="off" spellcheck="false" maxlength="24" />
+    <button class="add-btn" id="add-btn">ADD</button>
+  </div>
+  <div class="input-msg" id="input-msg">type a word that connects to the last one</div>
+
+  <div class="progress">
+    <div><span>Par</span><strong id="par">—</strong></div>
+    <div><span>Your Links</span><strong id="your-links">0</strong></div>
+    <div><span>Streak</span><strong id="streak">0</strong></div>
+  </div>
+
+  <div class="actions">
+    <button class="btn" id="undo-btn">↶ UNDO</button>
+    <button class="btn danger" id="giveup-btn">GIVE UP</button>
+  </div>
+
+  <div id="complete-host"></div>
+</main>
+
+<footer class="footer">
+  <p>A daily word puzzle · <a href="#" id="about-link">About</a></p>
+</footer>
+
+<script>
+'use strict';
+
+// ============================================================
+// SEMANTIC BRIDGE — daily word puzzle
+// ============================================================
+
+const VERSION = 1;
+const STORAGE_KEY = 'semanticBridge.v1';
+
+// --- Puzzle pool (curated daily pairs) ---------------------
+// Each puzzle: { start, end, par, [intended] }
+// `par` is the target chain length (number of links, not nodes).
+// `intended` is a hand-authored example solution used for testing & hint mode.
+const PUZZLES = [
+  { start: 'dog',     end: 'faith',     par: 4, intended: ['dog','collar','chain','church','faith'] },
+  { start: 'fire',    end: 'silence',   par: 4, intended: ['fire','smoke','breath','whisper','silence'] },
+  { start: 'ocean',   end: 'book',      par: 4, intended: ['ocean','wave','sound','word','book'] },
+  { start: 'star',    end: 'coffee',    par: 4, intended: ['star','night','morning','coffee'] },
+  { start: 'winter',  end: 'music',     par: 3, intended: ['winter','silence','sound','music'] },
+  { start: 'key',     end: 'flower',    par: 3, intended: ['key','lock','petal','flower'] },
+  { start: 'moon',    end: 'kitchen',   par: 4, intended: ['moon','milk','breakfast','kitchen'] },
+  { start: 'storm',   end: 'whisper',   par: 3, intended: ['storm','wind','breath','whisper'] },
+  { start: 'bridge',  end: 'fear',      par: 3, intended: ['bridge','height','fall','fear'] },
+  { start: 'apple',   end: 'shadow',    par: 3, intended: ['apple','tree','sun','shadow'] },
+  { start: 'ship',    end: 'secret',    par: 4, intended: ['ship','sea','depth','mystery','secret'] },
+  { start: 'engine',  end: 'poem',      par: 4, intended: ['engine','noise','rhythm','verse','poem'] },
+  { start: 'sleep',   end: 'fire',      par: 3, intended: ['sleep','dream','spark','fire'] },
+  { start: 'desert',  end: 'clock',     par: 4, intended: ['desert','sand','grain','time','clock'] },
+  { start: 'forest',  end: 'war',       par: 4, intended: ['forest','tree','wood','weapon','war'] },
+  { start: 'bread',   end: 'silver',    par: 3, intended: ['bread','knife','metal','silver'] },
+  { start: 'king',    end: 'shadow',    par: 2, intended: ['king','crown','light','shadow'] },
+  { start: 'school',  end: 'moon',      par: 4, intended: ['school','night','sky','moon'] },
+  { start: 'mirror',  end: 'lie',       par: 2, intended: ['mirror','reflection','truth','lie'] },
+  { start: 'thread',  end: 'ghost',     par: 3, intended: ['thread','cloth','sheet','ghost'] },
+  { start: 'river',   end: 'memory',    par: 4, intended: ['river','flow','time','past','memory'] },
+  { start: 'piano',   end: 'rain',      par: 3, intended: ['piano','key','tap','rain'] },
+  { start: 'bone',    end: 'song',      par: 4, intended: ['bone','dust','wind','breath','song'] },
+  { start: 'glass',   end: 'rage',      par: 3, intended: ['glass','break','shatter','rage'] },
+  { start: 'wolf',    end: 'lullaby',   par: 4, intended: ['wolf','howl','night','sleep','lullaby'] },
+  { start: 'gold',    end: 'patience',  par: 4, intended: ['gold','treasure','dig','time','patience'] },
+  { start: 'mountain',end: 'silence',   par: 3, intended: ['mountain','peak','sky','silence'] },
+  { start: 'candle',  end: 'memory',    par: 3, intended: ['candle','flame','smoke','memory'] },
+  { start: 'rust',    end: 'promise',   par: 4, intended: ['rust','time','ring','wedding','promise'] },
+  { start: 'spider',  end: 'art',       par: 3, intended: ['spider','web','design','art'] },
+];
+
+// --- Daily seed --------------------------------------------
+// Pick today's puzzle by hashing the UTC date. Same date worldwide = same puzzle.
+function dayIndex() {
+  const epoch = new Date(Date.UTC(2024, 0, 1)); // launch day baseline
+  const now = new Date();
+  const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+  return Math.floor((today - epoch) / (1000 * 60 * 60 * 24));
+}
+function todaysPuzzle() {
+  const idx = dayIndex();
+  return { day: idx, puzzle: PUZZLES[((idx % PUZZLES.length) + PUZZLES.length) % PUZZLES.length] };
+}
+function todaysDateStr() {
+  const d = new Date();
+  return d.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+}
+
+// --- Validation via Datamuse API ----------------------------
+// Free, no API key, CORS-enabled. We cache aggressively in localStorage so each
+// (a, b) pair is only ever queried once per device.
+const DATAMUSE = 'https://api.datamuse.com/words';
+const assocCache = JSON.parse(localStorage.getItem(STORAGE_KEY + '.cache') || '{}');
+function saveCache() {
+  try { localStorage.setItem(STORAGE_KEY + '.cache', JSON.stringify(assocCache)); }
+  catch (e) {}
+}
+
+async function fetchRel(word, rel, max = 200) {
+  word = word.toLowerCase().trim();
+  const key = `${rel}:${word}:${max}`;
+  if (assocCache[key]) return assocCache[key];
+  try {
+    const resp = await fetch(`${DATAMUSE}?${rel}=${encodeURIComponent(word)}&max=${max}`);
+    if (!resp.ok) return [];
+    const data = await resp.json();
+    const list = data.map(d => d.word.toLowerCase());
+    assocCache[key] = list;
+    saveCache();
+    return list;
+  } catch (e) {
+    return [];
+  }
+}
+
+// A link between A and B is valid if any of these is true:
+//   - B appears among the top trigger associations of A (rel_trg)
+//   - A appears among the top trigger associations of B (reverse)
+//   - B is a synonym of A (rel_syn)
+//   - B is "meaning-like" A (ml — broad semantic similarity)
+//   - B is a hypernym/hyponym of A (rel_spc / rel_gen)
+async function isValidLink(a, b) {
+  a = a.toLowerCase().trim();
+  b = b.toLowerCase().trim();
+  if (!a || !b || a === b) return { valid: false, reason: 'same word' };
+
+  // Quick: exact phrase match in either trigger direction
+  const triggers = await fetchRel(a, 'rel_trg', 300);
+  if (triggers.includes(b)) return { valid: true, elegant: false };
+
+  const reverse = await fetchRel(b, 'rel_trg', 300);
+  if (reverse.includes(a)) return { valid: true, elegant: false };
+
+  // Synonyms, hypernyms, hyponyms
+  const syns = await fetchRel(a, 'rel_syn', 100);
+  if (syns.includes(b)) return { valid: true, elegant: false };
+  const spc = await fetchRel(a, 'rel_spc', 100);
+  if (spc.includes(b)) return { valid: true, elegant: false };
+  const gen = await fetchRel(a, 'rel_gen', 100);
+  if (gen.includes(b)) return { valid: true, elegant: false };
+
+  // Broader "means like" — accepts loose semantic similarity. Flag as elegant
+  // if it shows up here but didn't show in any of the tighter relations.
+  const ml = await fetchRel(a, 'ml', 200);
+  if (ml.includes(b)) return { valid: true, elegant: true };
+
+  // Reverse "means like"
+  const mlR = await fetchRel(b, 'ml', 200);
+  if (mlR.includes(a)) return { valid: true, elegant: true };
+
+  return { valid: false, reason: 'no association found' };
+}
+
+// Word must exist as an English word (not just a typo).
+async function isRealWord(w) {
+  w = w.toLowerCase().trim();
+  if (!w) return false;
+  if (/^[a-z]{1,24}$/.test(w) === false) return false;
+  // Datamuse 'sp' (spelled-like) — if there's an exact match at score 100+, it's real
+  const key = `real:${w}`;
+  if (assocCache[key] !== undefined) return assocCache[key] === 1;
+  try {
+    const resp = await fetch(`${DATAMUSE}?sp=${encodeURIComponent(w)}&max=5`);
+    const data = await resp.json();
+    const real = data.length > 0 && data[0].word.toLowerCase() === w;
+    assocCache[key] = real ? 1 : 0;
+    saveCache();
+    return real;
+  } catch (e) {
+    return true; // fail open — don't block on network errors
+  }
+}
+
+// --- Game state --------------------------------------------
+let state = {
+  day: 0,
+  puzzle: null,
+  chain: [],         // [{word, elegant}]
+  complete: false,
+  gaveUp: false,
+  busy: false,
+};
+const stats = loadStats();
+
+function loadStats() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return { lastPlayed: 0, streak: 0, totalWins: 0, history: {} };
+    return JSON.parse(raw);
+  } catch (e) { return { lastPlayed: 0, streak: 0, totalWins: 0, history: {} }; }
+}
+function saveStats() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(stats)); } catch (e) {}
+}
+
+// --- Rendering ---------------------------------------------
+function $(id) { return document.getElementById(id); }
+
+function renderHeader() {
+  $('subtitle').textContent = `Daily Puzzle · Day ${state.day + 1} · ${todaysDateStr()}`;
+  $('start-word').textContent = state.puzzle.start.toUpperCase();
+  $('end-word').textContent = state.puzzle.end.toUpperCase();
+}
+
+function renderChain() {
+  const el = $('chain');
+  if (state.chain.length === 0) {
+    el.innerHTML = `<div class="chain-empty">start by typing a word that connects to ${state.puzzle.start.toUpperCase()}</div>`;
+    return;
+  }
+  const parts = [];
+  // Start pill
+  parts.push(`<span class="link"><span class="pill start">${state.puzzle.start}</span></span>`);
+  state.chain.forEach((entry, i) => {
+    parts.push(`<span class="arrow">→</span>`);
+    const cls = entry.elegant ? 'elegant' : 'valid';
+    const last = i === state.chain.length - 1 && !state.complete;
+    const removeBtn = last ? `<span class="remove" data-i="${i}" title="remove">✕</span>` : '';
+    const isEnd = entry.word.toLowerCase() === state.puzzle.end.toLowerCase();
+    parts.push(`<span class="link"><span class="pill ${isEnd ? 'end' : cls}">${entry.word}${removeBtn}</span></span>`);
+  });
+  el.innerHTML = parts.join('');
+  el.querySelectorAll('.remove').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const i = parseInt(btn.getAttribute('data-i'), 10);
+      state.chain = state.chain.slice(0, i);
+      saveProgress();
+      renderAll();
+    });
+  });
+}
+
+function renderProgress() {
+  $('par').textContent = state.puzzle.par;
+  $('your-links').textContent = state.chain.length;
+  $('streak').textContent = stats.streak || 0;
+}
+
+function renderCompletion() {
+  const host = $('complete-host');
+  if (!state.complete) { host.innerHTML = ''; return; }
+  const links = state.chain.length;
+  const par = state.puzzle.par;
+  let stars = 1;
+  if (links <= par) stars = 3;
+  else if (links <= par + 1) stars = 2;
+  const starStr = '★★★'.slice(0, stars) + '<span class="star-off">' + '★★★'.slice(0, 3 - stars) + '</span>';
+  const heading = state.gaveUp ? 'Bridge Closed' : 'Bridge Complete';
+  const message = state.gaveUp
+    ? 'Maybe tomorrow.'
+    : (links <= par ? 'Elegant solve.' : links <= par + 1 ? 'Solid bridge.' : 'You got there.');
+  host.innerHTML = `
+    <div class="complete">
+      <h2>${heading}</h2>
+      <div class="stars">${starStr}</div>
+      <p>${message}</p>
+      <div class="summary-grid">
+        <div><span>Your Links</span><strong>${links}</strong></div>
+        <div><span>Par</span><strong>${par}</strong></div>
+      </div>
+      <div class="actions">
+        <button class="btn primary" id="share-btn">SHARE</button>
+        <button class="btn" id="see-path-btn">SHOW EXAMPLE</button>
+      </div>
+      <div id="example-host" style="margin-top:14px;"></div>
+    </div>
+  `;
+  $('share-btn').addEventListener('click', shareResult);
+  $('see-path-btn').addEventListener('click', () => {
+    const ex = state.puzzle.intended;
+    if (!ex) { $('example-host').innerHTML = '<p style="color:var(--ink-dim);font-size:13px;">No example available.</p>'; return; }
+    const parts = ex.map((w, i) => i === 0 ? `<span class="pill start">${w}</span>` : (i === ex.length - 1 ? `<span class="pill end">${w}</span>` : `<span class="pill valid">${w}</span>`));
+    $('example-host').innerHTML = `<div class="chain" style="margin:0;">${parts.map((p, i) => i === 0 ? p : `<span class="arrow">→</span>${p}`).join('')}</div>`;
+  });
+}
+
+function renderAll() {
+  renderHeader();
+  renderChain();
+  renderProgress();
+  renderCompletion();
+  $('word-input').disabled = state.complete;
+  $('add-btn').disabled = state.complete || state.busy;
+  $('undo-btn').disabled = state.complete || state.chain.length === 0;
+  $('giveup-btn').disabled = state.complete;
+}
+
+// --- Game actions ------------------------------------------
+function setMsg(text, kind = '') {
+  const el = $('input-msg');
+  el.textContent = text;
+  el.className = 'input-msg' + (kind ? ' ' + kind : '');
+}
+
+async function attemptAdd() {
+  if (state.busy || state.complete) return;
+  const raw = $('word-input').value.trim().toLowerCase();
+  if (!raw) { setMsg('type a word', 'err'); return; }
+  if (!/^[a-z][a-z\-']{0,23}$/.test(raw)) { setMsg('letters only', 'err'); shakeInput(); return; }
+
+  // Already used?
+  const prev = state.chain.length > 0 ? state.chain[state.chain.length - 1].word : state.puzzle.start;
+  if (raw === prev) { setMsg(`same as previous word`, 'err'); shakeInput(); return; }
+  if (raw === state.puzzle.start) { setMsg('that\'s the start word', 'err'); shakeInput(); return; }
+  if (state.chain.some(c => c.word.toLowerCase() === raw)) {
+    setMsg('word already in your chain', 'err'); shakeInput(); return;
+  }
+
+  state.busy = true;
+  setMsg('checking association…', 'loading');
+  renderAll();
+
+  // Validate it's a real word
+  const real = await isRealWord(raw);
+  if (!real) {
+    state.busy = false;
+    setMsg(`"${raw}" doesn't look like a word`, 'err');
+    shakeInput(); renderAll(); return;
+  }
+
+  // Validate link to previous
+  const link = await isValidLink(prev, raw);
+  if (!link.valid) {
+    state.busy = false;
+    setMsg(`no clear connection from "${prev}" → "${raw}"`, 'err');
+    shakeInput(); renderAll(); return;
+  }
+
+  // Accept
+  state.chain.push({ word: raw, elegant: !!link.elegant });
+  $('word-input').value = '';
+  state.busy = false;
+  setMsg(link.elegant ? '✨ elegant leap' : 'valid link', 'ok');
+
+  // Check completion: is `raw` either the end word or validly linked to it?
+  if (raw === state.puzzle.end.toLowerCase()) {
+    completeGame(false);
+  } else {
+    // Check whether this word connects to the end — if so, give the player a hint
+    const toEnd = await isValidLink(raw, state.puzzle.end);
+    if (toEnd.valid) {
+      // Offer the option: chain visually shows "almost there" hint
+      setMsg(`✨ "${raw}" connects directly to ${state.puzzle.end.toUpperCase()} — add it!`, 'ok');
+    }
+  }
+  saveProgress();
+  renderAll();
+}
+
+function shakeInput() {
+  const el = $('word-input');
+  el.classList.remove('shake');
+  void el.offsetWidth;
+  el.classList.add('shake');
+}
+
+function completeGame(gaveUp) {
+  state.complete = true;
+  state.gaveUp = gaveUp;
+  // Update stats
+  const key = String(state.day);
+  if (!gaveUp) {
+    stats.totalWins = (stats.totalWins || 0) + 1;
+    // Streak: did we play yesterday?
+    const yesterday = state.day - 1;
+    if (!stats.history[String(yesterday)] || !stats.history[String(yesterday)].won) {
+      if (stats.lastPlayed === yesterday) stats.streak = (stats.streak || 0) + 1;
+      else stats.streak = 1;
+    } else {
+      stats.streak = (stats.streak || 0) + 1;
+    }
+    stats.lastPlayed = state.day;
+  }
+  stats.history[key] = {
+    won: !gaveUp,
+    links: state.chain.length,
+    par: state.puzzle.par,
+    chain: state.chain.map(c => c.word),
+    date: Date.now(),
+  };
+  saveStats();
+  saveProgress();
+  renderAll();
+  if (!gaveUp) {
+    setTimeout(throwConfetti, 200);
+    toast('Bridge complete!');
+  }
+}
+
+function undo() {
+  if (state.chain.length === 0) return;
+  state.chain.pop();
+  saveProgress();
+  setMsg('reverted', '');
+  renderAll();
+}
+
+function giveUp() {
+  if (!confirm('Give up on today\'s bridge? You can see the example path after.')) return;
+  completeGame(true);
+}
+
+function shareResult() {
+  const links = state.chain.length;
+  const par = state.puzzle.par;
+  const stars = state.gaveUp ? 0 : (links <= par ? 3 : links <= par + 1 ? 2 : 1);
+  const starStr = '⭐'.repeat(stars) + (stars === 0 ? '—' : '');
+  const emojiChain = state.chain.map(c => c.elegant ? '🟡' : '🟢').join('');
+  const txt = `Semantic Bridge · Day ${state.day + 1}\n${state.puzzle.start.toUpperCase()} → ${state.puzzle.end.toUpperCase()}\n${state.gaveUp ? '(gave up)' : starStr + ' · ' + links + '/' + par + ' links'}\n${emojiChain}`;
+  if (navigator.share) {
+    navigator.share({ text: txt }).catch(() => copyToClipboard(txt));
+  } else {
+    copyToClipboard(txt);
+  }
+}
+
+function copyToClipboard(text) {
+  try {
+    navigator.clipboard.writeText(text).then(
+      () => toast('Copied to clipboard'),
+      () => fallbackCopy(text)
+    );
+  } catch (e) { fallbackCopy(text); }
+}
+function fallbackCopy(text) {
+  const t = document.createElement('textarea'); t.value = text;
+  document.body.appendChild(t); t.select();
+  try { document.execCommand('copy'); toast('Copied'); } catch (e) {}
+  t.remove();
+}
+
+function toast(msg) {
+  const el = document.createElement('div');
+  el.className = 'toast'; el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1800);
+}
+
+// --- Save / restore in-progress chain ----------------------
+function saveProgress() {
+  const data = {
+    day: state.day,
+    chain: state.chain,
+    complete: state.complete,
+    gaveUp: state.gaveUp,
+  };
+  try { localStorage.setItem(STORAGE_KEY + '.progress', JSON.stringify(data)); }
+  catch (e) {}
+}
+function loadProgress() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY + '.progress');
+    if (!raw) return null;
+    const data = JSON.parse(raw);
+    if (data.day !== state.day) return null; // different day — fresh start
+    return data;
+  } catch (e) { return null; }
+}
+
+// --- Confetti ----------------------------------------------
+function throwConfetti() {
+  const wrap = document.createElement('div');
+  wrap.className = 'confetti';
+  const colors = ['#2e7d5b', '#c89b3c', '#1c1c1c', '#b94a3a', '#5b6cff'];
+  for (let i = 0; i < 60; i++) {
+    const s = document.createElement('span');
+    s.style.left = Math.random() * 100 + 'vw';
+    s.style.background = colors[Math.floor(Math.random() * colors.length)];
+    s.style.animationDelay = (Math.random() * 0.6) + 's';
+    s.style.animationDuration = (1.8 + Math.random() * 1.4) + 's';
+    s.style.width = (4 + Math.random() * 8) + 'px';
+    s.style.height = s.style.width;
+    s.style.borderRadius = Math.random() < 0.5 ? '50%' : '2px';
+    wrap.appendChild(s);
+  }
+  document.body.appendChild(wrap);
+  setTimeout(() => wrap.remove(), 3200);
+}
+
+// --- Modals ------------------------------------------------
+function showModal(html) {
+  const bg = document.createElement('div');
+  bg.className = 'modal-bg';
+  bg.innerHTML = `<div class="modal"><button class="close" aria-label="Close">×</button>${html}</div>`;
+  document.body.appendChild(bg);
+  bg.querySelector('.close').addEventListener('click', () => bg.remove());
+  bg.addEventListener('click', (e) => { if (e.target === bg) bg.remove(); });
+  return bg;
+}
+
+function showHelp() {
+  showModal(`
+    <h2>How to Play</h2>
+    <p>Connect <strong>two distant words</strong> with a chain of related words. Each word you add must be linked by meaning to the one before it.</p>
+    <div class="example">
+      DOG → COLLAR → CHAIN → CHURCH → FAITH
+    </div>
+    <h3>The rules</h3>
+    <p>• Each link must be an association the game recognizes (synonyms, things commonly mentioned together, related concepts).</p>
+    <p>• You can't reuse words you've already chained.</p>
+    <p>• <strong>Shorter chains score better.</strong> Try to match or beat par.</p>
+    <h3>Scoring</h3>
+    <p>• Links ≤ par → ★★★<br>• Links = par+1 → ★★<br>• Anything longer → ★</p>
+    <h3>Tips</h3>
+    <p>• Think about which words sit between your two endpoints.</p>
+    <p>• Big leaps (yellow pills, "elegant leaps") are allowed — the game accepts looser semantic similarity, but tight links feel more satisfying.</p>
+    <p>• If a word isn't accepted, try a different angle.</p>
+  `);
+}
+
+function showStats() {
+  const wonDays = Object.values(stats.history || {}).filter(h => h && h.won);
+  const totalLinks = wonDays.reduce((a, h) => a + (h.links || 0), 0);
+  const avgLinks = wonDays.length ? (totalLinks / wonDays.length).toFixed(1) : '—';
+  const todayRecord = stats.history[String(state.day)];
+  const todayLine = todayRecord
+    ? (todayRecord.won
+        ? `<p>Today: ${todayRecord.links} links (par ${todayRecord.par})</p>`
+        : `<p>Today: gave up</p>`)
+    : '';
+  showModal(`
+    <h2>Your Stats</h2>
+    ${todayLine}
+    <div class="summary-grid">
+      <div><span>Current Streak</span><strong>${stats.streak || 0}</strong></div>
+      <div><span>Total Wins</span><strong>${stats.totalWins || 0}</strong></div>
+      <div><span>Days Played</span><strong>${Object.keys(stats.history || {}).length}</strong></div>
+      <div><span>Avg Links</span><strong>${avgLinks}</strong></div>
+    </div>
+    <h3>Coming Soon</h3>
+    <p>Accounts will let you replay any past puzzle and compete on a leaderboard.</p>
+  `);
+}
+
+function showAbout() {
+  showModal(`
+    <h2>About</h2>
+    <p>Semantic Bridge is a daily word puzzle. Every day at midnight UTC a new pair of words appears, and you have to connect them with a chain of associated words.</p>
+    <p>The game uses the free <a href="https://www.datamuse.com/api/" target="_blank" rel="noopener">Datamuse API</a> to judge whether two words are associated.</p>
+    <p>Made by an enthusiast. Free, open, no accounts required.</p>
+  `);
+}
+
+// --- Init --------------------------------------------------
+function init() {
+  const today = todaysPuzzle();
+  state.day = today.day;
+  state.puzzle = today.puzzle;
+
+  // Restore in-progress
+  const progress = loadProgress();
+  if (progress) {
+    state.chain = progress.chain || [];
+    state.complete = !!progress.complete;
+    state.gaveUp = !!progress.gaveUp;
+  }
+
+  renderAll();
+
+  $('add-btn').addEventListener('click', attemptAdd);
+  $('word-input').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); attemptAdd(); }
+  });
+  $('undo-btn').addEventListener('click', undo);
+  $('giveup-btn').addEventListener('click', giveUp);
+  $('help-btn').addEventListener('click', showHelp);
+  $('stats-btn').addEventListener('click', showStats);
+  $('about-link').addEventListener('click', (e) => { e.preventDefault(); showAbout(); });
+
+  // First-time players see help
+  if (!localStorage.getItem(STORAGE_KEY + '.seen-help')) {
+    setTimeout(showHelp, 400);
+    localStorage.setItem(STORAGE_KEY + '.seen-help', '1');
+  }
+
+  $('word-input').focus();
+}
+
+init();
+</script>
+</body>
+</html>
