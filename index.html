@@ -445,19 +445,91 @@ const PUZZLES = [
   { start: 'candle',  end: 'memory',    par: 3, intended: ['candle','flame','smoke','memory'] },
   { start: 'rust',    end: 'promise',   par: 4, intended: ['rust','time','ring','wedding','promise'] },
   { start: 'spider',  end: 'art',       par: 3, intended: ['spider','web','design','art'] },
+  // --- Month 2 (Days 31-60) ---
+  { start: 'lantern', end: 'ghost',      par: 3, intended: ['lantern','light','spirit','ghost'] },
+  { start: 'anchor',  end: 'memory',     par: 4, intended: ['anchor','sea','depth','past','memory'] },
+  { start: 'seed',    end: 'empire',     par: 4, intended: ['seed','grow','power','kingdom','empire'] },
+  { start: 'needle',  end: 'forest',     par: 3, intended: ['needle','pine','tree','forest'] },
+  { start: 'clay',    end: 'war',        par: 4, intended: ['clay','earth','blood','battle','war'] },
+  { start: 'velvet',  end: 'grief',      par: 3, intended: ['velvet','curtain','funeral','grief'] },
+  { start: 'lamp',    end: 'secret',     par: 3, intended: ['lamp','shadow','hide','secret'] },
+  { start: 'salt',    end: 'memory',     par: 3, intended: ['salt','tear','cry','memory'] },
+  { start: 'wind',    end: 'revolution', par: 4, intended: ['wind','change','storm','uprising','revolution'] },
+  { start: 'iron',    end: 'patience',   par: 4, intended: ['iron','forge','fire','time','patience'] },
+  { start: 'dust',    end: 'kingdom',    par: 3, intended: ['dust','ruin','fallen','kingdom'] },
+  { start: 'honey',   end: 'poem',       par: 3, intended: ['honey','sweet','words','poem'] },
+  { start: 'garden',  end: 'war',        par: 4, intended: ['garden','trench','soldier','battle','war'] },
+  { start: 'paper',   end: 'eternity',   par: 4, intended: ['paper','ink','word','forever','eternity'] },
+  { start: 'piano',   end: 'ocean',      par: 3, intended: ['piano','note','wave','ocean'] },
+  { start: 'window',  end: 'confession', par: 3, intended: ['window','glass','reveal','confession'] },
+  { start: 'brick',   end: 'freedom',    par: 3, intended: ['brick','wall','break','freedom'] },
+  { start: 'river',   end: 'grief',      par: 3, intended: ['river','tear','cry','grief'] },
+  { start: 'coal',    end: 'diamond',    par: 2, intended: ['coal','pressure','diamond'] },
+  { start: 'road',    end: 'choice',     par: 3, intended: ['road','fork','decision','choice'] },
+  { start: 'mask',    end: 'truth',      par: 3, intended: ['mask','hide','reveal','truth'] },
+  { start: 'star',    end: 'grave',      par: 4, intended: ['star','night','death','bury','grave'] },
+  { start: 'cathedral',end:'echo',       par: 3, intended: ['cathedral','hall','sound','echo'] },
+  { start: 'spider',  end: 'fate',       par: 3, intended: ['spider','web','trap','fate'] },
+  { start: 'attic',   end: 'childhood',  par: 3, intended: ['attic','trunk','toy','childhood'] },
+  { start: 'clock',   end: 'death',      par: 3, intended: ['clock','time','end','death'] },
+  { start: 'ladder',  end: 'ambition',   par: 3, intended: ['ladder','climb','rise','ambition'] },
+  { start: 'wallet',  end: 'identity',   par: 3, intended: ['wallet','card','name','identity'] },
+  { start: 'radio',   end: 'solitude',   par: 3, intended: ['radio','static','silence','solitude'] },
+  { start: 'ash',     end: 'renewal',    par: 3, intended: ['ash','fire','phoenix','renewal'] },
+  // --- Month 3 (Days 61-90) ---
+  { start: 'crown',   end: 'loneliness', par: 3, intended: ['crown','king','alone','loneliness'] },
+  { start: 'mirror',  end: 'vanity',     par: 2, intended: ['mirror','reflection','vanity'] },
+  { start: 'salt',    end: 'ocean',      par: 2, intended: ['salt','sea','ocean'] },
+  { start: 'moth',    end: 'obsession',  par: 3, intended: ['moth','flame','fire','obsession'] },
+  { start: 'ink',     end: 'blood',      par: 3, intended: ['ink','red','wound','blood'] },
+  { start: 'door',    end: 'temptation', par: 3, intended: ['door','open','reveal','temptation'] },
+  { start: 'lighthouse',end:'hope',      par: 2, intended: ['lighthouse','beacon','hope'] },
+  { start: 'island',  end: 'exile',      par: 2, intended: ['island','alone','exile'] },
+  { start: 'axe',     end: 'forgiveness',par: 4, intended: ['axe','cut','wound','heal','forgiveness'] },
+  { start: 'forge',   end: 'identity',   par: 3, intended: ['forge','metal','shape','identity'] },
+  { start: 'flute',   end: 'memory',     par: 3, intended: ['flute','song','past','memory'] },
+  { start: 'pearl',   end: 'patience',   par: 3, intended: ['pearl','oyster','time','patience'] },
+  { start: 'ribbon',  end: 'promise',    par: 3, intended: ['ribbon','bow','gift','promise'] },
+  { start: 'tide',    end: 'forgetting', par: 3, intended: ['tide','wash','erase','forgetting'] },
+  { start: 'spoon',   end: 'soup',       par: 2, intended: ['spoon','bowl','soup'] },
+  { start: 'pencil',  end: 'school',     par: 2, intended: ['pencil','class','school'] },
+  { start: 'pillow',  end: 'memory',     par: 3, intended: ['pillow','dream','past','memory'] },
+  { start: 'bird',    end: 'courage',    par: 3, intended: ['bird','fly','fear','courage'] },
+  { start: 'echo',    end: 'mountain',   par: 3, intended: ['echo','sound','peak','mountain'] },
+  { start: 'compass', end: 'desire',     par: 4, intended: ['compass','direction','journey','want','desire'] },
+  { start: 'engine',  end: 'heart',      par: 3, intended: ['engine','machine','pump','heart'] },
+  { start: 'map',     end: 'loneliness', par: 4, intended: ['map','journey','distance','alone','loneliness'] },
+  { start: 'thread',  end: 'universe',   par: 4, intended: ['thread','string','space','cosmos','universe'] },
+  { start: 'candle',  end: 'revolution', par: 4, intended: ['candle','flame','spark','uprising','revolution'] },
+  { start: 'prism',   end: 'silence',    par: 4, intended: ['prism','rainbow','color','calm','silence'] },
+  { start: 'harbor',  end: 'ghost',      par: 4, intended: ['harbor','ship','wreck','dead','ghost'] },
+  { start: 'algebra', end: 'love',       par: 4, intended: ['algebra','equation','balance','union','love'] },
+  { start: 'factory', end: 'dream',      par: 4, intended: ['factory','worker','tired','sleep','dream'] },
+  { start: 'atom',    end: 'laughter',   par: 5, intended: ['atom','energy','life','joy','smile','laughter'] },
+  { start: 'autumn',  end: 'lullaby',    par: 4, intended: ['autumn','leaves','wind','song','lullaby'] },
 ];
 
 // --- Daily seed --------------------------------------------
 // Pick today's puzzle by hashing the UTC date. Same date worldwide = same puzzle.
+// Day 1 = Monday, May 25, 2026 (launch).
+const LAUNCH_EPOCH = new Date(Date.UTC(2026, 4, 25)); // month is 0-indexed: 4 = May
 function dayIndex() {
-  const epoch = new Date(Date.UTC(2024, 0, 1)); // launch day baseline
   const now = new Date();
   const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
-  return Math.floor((today - epoch) / (1000 * 60 * 60 * 24));
+  return Math.floor((today - LAUNCH_EPOCH) / (1000 * 60 * 60 * 24));
+}
+function isLaunched() { return dayIndex() >= 0; }
+function daysUntilLaunch() {
+  const d = -dayIndex();
+  return d > 0 ? d : 0;
 }
 function todaysPuzzle() {
   const idx = dayIndex();
-  return { day: idx, puzzle: PUZZLES[((idx % PUZZLES.length) + PUZZLES.length) % PUZZLES.length] };
+  if (idx < 0) {
+    // Pre-launch: show Day 1's puzzle as a playable preview
+    return { day: 0, puzzle: PUZZLES[0], preview: true };
+  }
+  return { day: idx, puzzle: PUZZLES[idx % PUZZLES.length] };
 }
 function todaysDateStr() {
   const d = new Date();
@@ -575,7 +647,13 @@ function saveStats() {
 function $(id) { return document.getElementById(id); }
 
 function renderHeader() {
-  $('subtitle').textContent = `Daily Puzzle · Day ${state.day + 1} · ${todaysDateStr()}`;
+  if (!isLaunched()) {
+    const d = daysUntilLaunch();
+    const launchStr = LAUNCH_EPOCH.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+    $('subtitle').textContent = `Preview · launches ${launchStr} (${d} day${d === 1 ? '' : 's'} to go)`;
+  } else {
+    $('subtitle').textContent = `Daily Puzzle · Day ${state.day + 1} · ${todaysDateStr()}`;
+  }
   $('start-word').textContent = state.puzzle.start.toUpperCase();
   $('end-word').textContent = state.puzzle.end.toUpperCase();
 }
@@ -912,11 +990,16 @@ function showStats() {
 }
 
 function showAbout() {
+  const launchStr = LAUNCH_EPOCH.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+  const launchLine = isLaunched()
+    ? `<p>Launched ${launchStr}. Day ${dayIndex() + 1} of the run.</p>`
+    : `<p>Official launch: <strong>${launchStr}</strong>. Until then this is a preview — you can play the Day 1 puzzle to get a feel for it.</p>`;
   showModal(`
     <h2>About</h2>
     <p>Semantic Bridge is a daily word puzzle. Every day at midnight UTC a new pair of words appears, and you have to connect them with a chain of associated words.</p>
-    <p>The game uses the free <a href="https://www.datamuse.com/api/" target="_blank" rel="noopener">Datamuse API</a> to judge whether two words are associated.</p>
-    <p>Made by an enthusiast. Free, open, no accounts required.</p>
+    ${launchLine}
+    <p>The game uses the free <a href="https://www.datamuse.com/api/" target="_blank" rel="noopener">Datamuse API</a> to judge whether two words are associated. Player progress, stats, and association lookups are all cached locally — no accounts, no tracking.</p>
+    <p>Made by an enthusiast. Free, open.</p>
   `);
 }
 
