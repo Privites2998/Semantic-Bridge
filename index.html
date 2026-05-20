@@ -23,6 +23,7 @@
     --warn: #b94a3a;
     --warn-soft: #f3dcd5;
     --gold: #c89b3c;
+    --gold-soft: #fdf6e3;
     --pill-bg: #ffffff;
     --shadow: 0 1px 2px rgba(28,28,28,0.06), 0 4px 10px rgba(28,28,28,0.05);
     --shadow-lg: 0 4px 24px rgba(28,28,28,0.10);
@@ -66,96 +67,91 @@
   .icon-btn.left { right: auto; left: 0; }
   .icon-btn svg { width: 22px; height: 22px; display: block; }
 
-  /* MAIN GAME */
-  .game { max-width: 640px; margin: 0 auto; }
+  /* MAIN */
+  .game { max-width: 580px; margin: 0 auto; }
 
-  .bridge-row {
-    display: grid; grid-template-columns: 1fr auto 1fr;
-    gap: 18px; align-items: center; margin: 32px 0 28px;
+  /* CHAIN PROGRESS ROW */
+  .chain-row {
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px; flex-wrap: wrap;
+    margin: 28px 0 28px; padding: 0 4px;
   }
-  .word-end {
-    display: flex; flex-direction: column; align-items: center; gap: 6px;
+  .cn {
+    font-family: 'JetBrains Mono', monospace; font-weight: 600;
+    font-size: 13px; padding: 8px 14px; border-radius: 999px;
+    letter-spacing: 0.02em; white-space: nowrap;
   }
-  .word-end .label {
-    font-size: 10px; letter-spacing: 0.22em; color: var(--ink-dim);
-    text-transform: uppercase; font-weight: 600;
+  .cn.start  { background: var(--ink); color: var(--bg); }
+  .cn.finish { background: var(--accent); color: var(--bg); }
+  .cn.solved { background: var(--accent-soft); color: var(--accent-dark); border: 1px solid var(--accent); }
+  .cn.active { background: var(--bg-soft); color: var(--ink); border: 2px solid var(--ink); animation: pulse-border 1.6s ease-in-out infinite; }
+  .cn.pending{ background: var(--bg-soft); color: var(--ink-dim); border: 1px dashed var(--line-strong); }
+  .cn.giveup { background: var(--gold-soft); color: #6e4d18; border: 1px solid var(--gold); }
+  @keyframes pulse-border {
+    0%, 100% { border-color: var(--ink); }
+    50% { border-color: var(--ink-dim); }
   }
-  .word-end .word {
-    font-family: 'Fraunces', Georgia, serif;
-    font-weight: 700; font-size: 28px;
-    padding: 12px 22px; background: var(--ink); color: var(--bg);
-    border-radius: var(--radius); letter-spacing: 0.01em;
-    font-variation-settings: 'opsz' 60;
-    box-shadow: var(--shadow);
-  }
-  .word-end.end .word { background: var(--accent); }
-  .bridge-mid {
-    height: 2px; background: var(--line-strong);
-    position: relative; align-self: center;
-    min-width: 30px;
-  }
-  .bridge-mid::before, .bridge-mid::after {
-    content: ''; position: absolute; top: -3px;
-    width: 8px; height: 8px; background: var(--line-strong);
-    border-radius: 50%;
-  }
-  .bridge-mid::before { left: -4px; }
-  .bridge-mid::after  { right: -4px; }
+  .chain-arrow { color: var(--line-strong); font-size: 14px; user-select: none; }
 
-  /* CHAIN */
-  .chain {
-    display: flex; flex-wrap: wrap; gap: 6px;
-    justify-content: center; align-items: center;
-    margin: 24px 0 20px; min-height: 56px;
-    padding: 6px;
+  /* STEP PROMPT */
+  .step-prompt {
+    text-align: center; font-size: 14px; color: var(--ink-soft);
+    margin-bottom: 16px;
   }
-  .chain-empty {
-    color: var(--ink-dim); font-style: italic; font-size: 14px;
-    padding: 14px;
+  .step-prompt strong { color: var(--ink); }
+
+  /* LETTER TILES */
+  .tiles {
+    display: flex; gap: 7px; justify-content: center;
+    margin: 0 auto 14px; flex-wrap: nowrap;
   }
-  .link {
-    display: inline-flex; align-items: center; gap: 4px;
+  .tile {
+    width: 44px; height: 52px; border: 2px solid var(--line);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace; font-size: 20px;
+    font-weight: 700; text-transform: uppercase;
+    border-radius: var(--radius); background: var(--pill-bg);
+    color: var(--ink-dim); transition: border-color 0.25s, background 0.25s, color 0.25s;
+    flex-shrink: 0;
   }
-  .pill {
-    background: var(--pill-bg); border: 1px solid var(--line);
-    padding: 9px 16px; border-radius: 999px;
-    font-family: 'JetBrains Mono', monospace; font-weight: 500;
-    font-size: 14px; letter-spacing: 0.01em; color: var(--ink);
-    box-shadow: var(--shadow);
-    animation: pill-in 0.35s cubic-bezier(.34,1.56,.64,1);
-    position: relative;
+  .tile.revealed {
+    border-color: var(--gold); background: var(--gold-soft);
+    color: #6e4d18; animation: tile-pop 0.3s;
   }
-  .pill.start { background: var(--ink); color: var(--bg); border-color: var(--ink); }
-  .pill.end { background: var(--accent); color: var(--bg); border-color: var(--accent); }
-  .pill.valid { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-dark); }
-  .pill.elegant { border-color: var(--gold); background: #fdf6e3; color: #6e4d18; box-shadow: 0 0 0 2px rgba(200,155,60,0.18), var(--shadow); }
-  .pill .remove {
-    margin-left: 4px; cursor: pointer; opacity: 0.45; font-size: 12px;
-    line-height: 1; padding: 2px;
+  .tile.correct {
+    border-color: var(--accent); background: var(--accent);
+    color: #fff; animation: tile-pop 0.25s;
   }
-  .pill .remove:hover { opacity: 1; }
-  .arrow {
-    color: var(--line-strong); font-size: 14px; user-select: none;
+  @keyframes tile-pop {
+    0%   { transform: scale(0.8); }
+    60%  { transform: scale(1.12); }
+    100% { transform: scale(1); }
   }
-  @keyframes pill-in {
-    0%   { opacity: 0; transform: translateY(8px) scale(0.85); }
-    100% { opacity: 1; transform: translateY(0) scale(1); }
+  @keyframes tile-wave {
+    0%,100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
   }
-  @keyframes shake {
-    10%, 90% { transform: translateX(-1px); }
-    20%, 80% { transform: translateX(2px); }
-    30%, 50%, 70% { transform: translateX(-4px); }
-    40%, 60% { transform: translateX(4px); }
+
+  /* WRONG GUESSES */
+  .wrongs {
+    display: flex; gap: 6px; justify-content: center; flex-wrap: wrap;
+    min-height: 30px; margin-bottom: 16px;
   }
-  .shake { animation: shake 0.4s; }
+  .wrong-pill {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    padding: 4px 10px; border-radius: 999px;
+    background: var(--warn-soft); color: var(--warn);
+    border: 1px solid var(--warn-soft);
+    text-decoration: line-through;
+  }
 
   /* INPUT AREA */
   .input-row {
     display: grid; grid-template-columns: 1fr auto;
-    gap: 8px; margin: 0 auto 4px; max-width: 480px;
+    gap: 8px; margin: 0 auto 6px; max-width: 420px;
   }
   .word-input {
-    background: var(--pill-bg); border: 1px solid var(--line);
+    background: var(--pill-bg); border: 1.5px solid var(--line);
     border-radius: var(--radius); padding: 12px 16px;
     font-family: 'JetBrains Mono', monospace; font-size: 15px;
     color: var(--ink); outline: none; transition: border-color 0.15s, box-shadow 0.15s;
@@ -166,31 +162,30 @@
     background: var(--ink); color: var(--bg); border: none;
     padding: 12px 22px; border-radius: var(--radius);
     font-family: 'Inter', sans-serif; font-weight: 600;
-    font-size: 14px; cursor: pointer; transition: background 0.15s, opacity 0.15s;
+    font-size: 14px; cursor: pointer; transition: background 0.15s;
     letter-spacing: 0.04em;
   }
   .add-btn:hover { background: var(--accent-dark); }
   .add-btn:disabled { background: var(--ink-dim); cursor: not-allowed; opacity: 0.6; }
   .input-msg {
     text-align: center; font-size: 12px; min-height: 18px;
-    color: var(--ink-dim); margin-top: 6px; margin-bottom: 18px;
+    color: var(--ink-dim); margin-top: 5px; margin-bottom: 20px;
   }
   .input-msg.err { color: var(--warn); }
   .input-msg.ok  { color: var(--accent); }
-  .input-msg.loading::after {
-    content: ''; display: inline-block; width: 8px; height: 8px;
-    margin-left: 6px; border-radius: 50%; background: var(--ink-dim);
-    animation: ld 1s infinite;
-  }
-  @keyframes ld {
-    0%, 100% { opacity: 0.2; }
-    50% { opacity: 1; }
-  }
 
-  /* PROGRESS / STATS */
+  @keyframes shake {
+    10%, 90% { transform: translateX(-1px); }
+    20%, 80% { transform: translateX(2px); }
+    30%, 50%, 70% { transform: translateX(-4px); }
+    40%, 60% { transform: translateX(4px); }
+  }
+  .shake { animation: shake 0.4s; }
+
+  /* PROGRESS BAR */
   .progress {
     display: grid; grid-template-columns: 1fr 1fr 1fr;
-    gap: 12px; max-width: 480px; margin: 0 auto 16px;
+    gap: 12px; max-width: 420px; margin: 0 auto 16px;
     text-align: center;
   }
   .progress > div {
@@ -225,23 +220,20 @@
   .btn.danger { color: var(--warn); border-color: var(--warn-soft); }
   .btn.danger:hover { background: var(--warn-soft); }
 
-  /* COMPLETION OVERLAY */
+  /* COMPLETION */
   .complete {
-    max-width: 640px; margin: 32px auto 0;
+    max-width: 580px; margin: 32px auto 0;
     background: var(--pill-bg); border: 1px solid var(--line);
     border-radius: var(--radius-lg); padding: 28px 24px;
     text-align: center; box-shadow: var(--shadow-lg);
-    animation: pill-in 0.5s;
+    animation: fade-in 0.45s;
   }
   .complete h2 {
     font-family: 'Fraunces', serif; font-weight: 700; font-size: 26px;
     margin: 0 0 6px; color: var(--accent-dark);
   }
   .complete p { margin: 0 0 18px; color: var(--ink-soft); font-size: 14px; }
-  .stars {
-    font-size: 28px; letter-spacing: 0.1em; margin-bottom: 14px;
-    color: var(--gold);
-  }
+  .stars { font-size: 28px; letter-spacing: 0.1em; margin-bottom: 14px; color: var(--gold); }
   .star-off { color: var(--line); }
   .summary-grid {
     display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
@@ -252,7 +244,7 @@
     border-radius: var(--radius); text-align: left;
   }
   .summary-grid span { font-size: 10px; letter-spacing: 0.18em; color: var(--ink-dim); text-transform: uppercase; font-weight: 600; }
-  .summary-grid strong { display: block; font-family: 'Fraunces', serif; font-size: 22px; color: var(--ink); margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .summary-grid strong { display: block; font-family: 'Fraunces', serif; font-size: 22px; color: var(--ink); margin-top: 2px; }
 
   /* MODAL */
   .modal-bg {
@@ -280,15 +272,18 @@
   .modal .close {
     position: absolute; top: 16px; right: 16px;
     background: none; border: none; cursor: pointer;
-    font-size: 24px; color: var(--ink-soft); padding: 4px;
-    line-height: 1;
+    font-size: 24px; color: var(--ink-soft); padding: 4px; line-height: 1;
   }
   .modal .close:hover { color: var(--ink); }
   .modal .example {
     background: var(--bg-soft); padding: 12px 14px; border-radius: var(--radius);
     font-family: 'JetBrains Mono', monospace; font-size: 13px;
-    color: var(--ink); margin: 6px 0 12px;
+    color: var(--ink); margin: 6px 0 12px; line-height: 1.8;
   }
+  .hint-demo {
+    display: flex; gap: 5px; justify-content: center; margin: 10px 0 16px;
+  }
+  .hint-demo .tile { width: 38px; height: 44px; font-size: 17px; }
 
   /* FOOTER */
   .footer {
@@ -300,28 +295,11 @@
   .footer a:hover { color: var(--ink); }
 
   /* CONFETTI */
-  .confetti {
-    position: fixed; pointer-events: none; top: 0; left: 0;
-    width: 100%; height: 100%; z-index: 50; overflow: hidden;
-  }
-  .confetti span {
-    position: absolute; width: 8px; height: 8px;
-    animation: fall 2.4s linear forwards;
-    opacity: 0.9;
-  }
+  .confetti { position: fixed; pointer-events: none; top: 0; left: 0; width: 100%; height: 100%; z-index: 50; overflow: hidden; }
+  .confetti span { position: absolute; width: 8px; height: 8px; animation: fall 2.4s linear forwards; opacity: 0.9; }
   @keyframes fall {
     0%   { transform: translateY(-20vh) rotate(0deg); opacity: 1; }
     100% { transform: translateY(120vh) rotate(720deg); opacity: 0; }
-  }
-
-  /* MOBILE */
-  @media (max-width: 520px) {
-    body { padding: 16px 14px 64px; }
-    .title { font-size: 28px; }
-    .word-end .word { font-size: 22px; padding: 10px 16px; }
-    .bridge-row { gap: 10px; }
-    .progress { grid-template-columns: 1fr 1fr; }
-    .progress > div:last-child { grid-column: 1 / -1; }
   }
 
   /* TOAST */
@@ -329,19 +307,29 @@
     position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
     background: var(--ink); color: var(--bg); padding: 10px 18px;
     border-radius: var(--radius); font-size: 13px; font-weight: 500;
-    z-index: 200; box-shadow: var(--shadow-lg);
-    animation: toast-in 0.3s;
+    z-index: 200; box-shadow: var(--shadow-lg); animation: toast-in 0.3s;
+    white-space: nowrap;
   }
   @keyframes toast-in {
     from { opacity: 0; transform: translate(-50%, 12px); }
     to   { opacity: 1; transform: translate(-50%, 0); }
+  }
+
+  /* MOBILE */
+  @media (max-width: 520px) {
+    body { padding: 16px 14px 64px; }
+    .title { font-size: 28px; }
+    .tile { width: 38px; height: 46px; font-size: 17px; }
+    .progress { grid-template-columns: 1fr 1fr; }
+    .progress > div:last-child { grid-column: 1 / -1; }
+    .cn { font-size: 12px; padding: 7px 11px; }
   }
 </style>
 </head>
 <body>
 
 <header class="hdr">
-  <button class="icon-btn left" id="help-btn" aria-label="How to play" title="How to play">
+  <button class="icon-btn left" id="help-btn" aria-label="How to play">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="12" cy="12" r="10"/>
       <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
@@ -350,7 +338,7 @@
   </button>
   <h1 class="title">Semantic Bridge</h1>
   <div class="subtitle" id="subtitle">Daily Puzzle · loading…</div>
-  <button class="icon-btn" id="stats-btn" aria-label="Stats" title="Stats">
+  <button class="icon-btn" id="stats-btn" aria-label="Stats">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <line x1="18" y1="20" x2="18" y2="10"/>
       <line x1="12" y1="20" x2="12" y2="4"/>
@@ -360,36 +348,28 @@
 </header>
 
 <main class="game">
-  <div class="bridge-row">
-    <div class="word-end start">
-      <div class="label">START</div>
-      <div class="word" id="start-word">—</div>
-    </div>
-    <div class="bridge-mid"></div>
-    <div class="word-end end">
-      <div class="label">END</div>
-      <div class="word" id="end-word">—</div>
-    </div>
-  </div>
+  <div class="chain-row" id="chain-row"></div>
 
-  <div class="chain" id="chain"></div>
-
-  <div class="input-row">
-    <input type="text" class="word-input" id="word-input"
-      placeholder="next word…" autocomplete="off" autocapitalize="off"
-      autocorrect="off" spellcheck="false" maxlength="24" />
-    <button class="add-btn" id="add-btn">ADD</button>
+  <div id="step-area">
+    <div class="step-prompt" id="step-prompt"></div>
+    <div class="tiles" id="tiles"></div>
+    <div class="wrongs" id="wrongs"></div>
+    <div class="input-row">
+      <input type="text" class="word-input" id="word-input"
+        placeholder="your guess…" autocomplete="off" autocapitalize="off"
+        autocorrect="off" spellcheck="false" maxlength="24" />
+      <button class="add-btn" id="add-btn">GUESS</button>
+    </div>
+    <div class="input-msg" id="input-msg">type a word, then press GUESS or Enter</div>
   </div>
-  <div class="input-msg" id="input-msg">type a word that connects to the last one</div>
 
   <div class="progress">
-    <div><span>Par</span><strong id="par">—</strong></div>
-    <div><span>Your Links</span><strong id="your-links">0</strong></div>
+    <div><span>Step</span><strong id="step-display">1/3</strong></div>
+    <div><span>Hints Used</span><strong id="hints-used">0</strong></div>
     <div><span>Streak</span><strong id="streak">0</strong></div>
   </div>
 
   <div class="actions">
-    <button class="btn" id="undo-btn">↶ UNDO</button>
     <button class="btn danger" id="giveup-btn">GIVE UP</button>
   </div>
 
@@ -403,405 +383,329 @@
 <script>
 'use strict';
 
-// ============================================================
-// SEMANTIC BRIDGE — daily word puzzle
-// ============================================================
+const STORAGE_KEY = 'semanticBridge.v2';
 
-const VERSION = 1;
-const STORAGE_KEY = 'semanticBridge.v1';
-
-// --- Puzzle pool (curated daily pairs) ---------------------
-// Each puzzle: { start, end, par, [intended] }
-// `par` is the target chain length (number of links, not nodes).
-// `intended` is a hand-authored example solution used for testing & hint mode.
+// Each puzzle: 5-word path. Words connect via natural compound words or associations.
+// bridge words are puzzle[1], puzzle[2], puzzle[3]
 const PUZZLES = [
-  { start: 'dog',     end: 'faith',     par: 4, intended: ['dog','collar','chain','church','faith'] },
-  { start: 'fire',    end: 'silence',   par: 4, intended: ['fire','smoke','breath','whisper','silence'] },
-  { start: 'ocean',   end: 'book',      par: 4, intended: ['ocean','wave','sound','word','book'] },
-  { start: 'star',    end: 'coffee',    par: 4, intended: ['star','night','morning','coffee'] },
-  { start: 'winter',  end: 'music',     par: 3, intended: ['winter','silence','sound','music'] },
-  { start: 'key',     end: 'flower',    par: 3, intended: ['key','lock','petal','flower'] },
-  { start: 'moon',    end: 'kitchen',   par: 4, intended: ['moon','milk','breakfast','kitchen'] },
-  { start: 'storm',   end: 'whisper',   par: 3, intended: ['storm','wind','breath','whisper'] },
-  { start: 'bridge',  end: 'fear',      par: 3, intended: ['bridge','height','fall','fear'] },
-  { start: 'apple',   end: 'shadow',    par: 3, intended: ['apple','tree','sun','shadow'] },
-  { start: 'ship',    end: 'secret',    par: 4, intended: ['ship','sea','depth','mystery','secret'] },
-  { start: 'engine',  end: 'poem',      par: 4, intended: ['engine','noise','rhythm','verse','poem'] },
-  { start: 'sleep',   end: 'fire',      par: 3, intended: ['sleep','dream','spark','fire'] },
-  { start: 'desert',  end: 'clock',     par: 4, intended: ['desert','sand','grain','time','clock'] },
-  { start: 'forest',  end: 'war',       par: 4, intended: ['forest','tree','wood','weapon','war'] },
-  { start: 'bread',   end: 'silver',    par: 3, intended: ['bread','knife','metal','silver'] },
-  { start: 'king',    end: 'shadow',    par: 2, intended: ['king','crown','light','shadow'] },
-  { start: 'school',  end: 'moon',      par: 4, intended: ['school','night','sky','moon'] },
-  { start: 'mirror',  end: 'lie',       par: 2, intended: ['mirror','reflection','truth','lie'] },
-  { start: 'thread',  end: 'ghost',     par: 3, intended: ['thread','cloth','sheet','ghost'] },
-  { start: 'river',   end: 'memory',    par: 4, intended: ['river','flow','time','past','memory'] },
-  { start: 'piano',   end: 'rain',      par: 3, intended: ['piano','key','tap','rain'] },
-  { start: 'bone',    end: 'song',      par: 4, intended: ['bone','dust','wind','breath','song'] },
-  { start: 'glass',   end: 'rage',      par: 3, intended: ['glass','break','shatter','rage'] },
-  { start: 'wolf',    end: 'lullaby',   par: 4, intended: ['wolf','howl','night','sleep','lullaby'] },
-  { start: 'gold',    end: 'patience',  par: 4, intended: ['gold','treasure','dig','time','patience'] },
-  { start: 'mountain',end: 'silence',   par: 3, intended: ['mountain','peak','sky','silence'] },
-  { start: 'candle',  end: 'memory',    par: 3, intended: ['candle','flame','smoke','memory'] },
-  { start: 'rust',    end: 'promise',   par: 4, intended: ['rust','time','ring','wedding','promise'] },
-  { start: 'spider',  end: 'art',       par: 3, intended: ['spider','web','design','art'] },
-  // --- Month 2 (Days 31-60) ---
-  { start: 'lantern', end: 'ghost',      par: 3, intended: ['lantern','light','spirit','ghost'] },
-  { start: 'anchor',  end: 'memory',     par: 4, intended: ['anchor','sea','depth','past','memory'] },
-  { start: 'seed',    end: 'empire',     par: 4, intended: ['seed','grow','power','kingdom','empire'] },
-  { start: 'needle',  end: 'forest',     par: 3, intended: ['needle','pine','tree','forest'] },
-  { start: 'clay',    end: 'war',        par: 4, intended: ['clay','earth','blood','battle','war'] },
-  { start: 'velvet',  end: 'grief',      par: 3, intended: ['velvet','curtain','funeral','grief'] },
-  { start: 'lamp',    end: 'secret',     par: 3, intended: ['lamp','shadow','hide','secret'] },
-  { start: 'salt',    end: 'memory',     par: 3, intended: ['salt','tear','cry','memory'] },
-  { start: 'wind',    end: 'revolution', par: 4, intended: ['wind','change','storm','uprising','revolution'] },
-  { start: 'iron',    end: 'patience',   par: 4, intended: ['iron','forge','fire','time','patience'] },
-  { start: 'dust',    end: 'kingdom',    par: 3, intended: ['dust','ruin','fallen','kingdom'] },
-  { start: 'honey',   end: 'poem',       par: 3, intended: ['honey','sweet','words','poem'] },
-  { start: 'garden',  end: 'war',        par: 4, intended: ['garden','trench','soldier','battle','war'] },
-  { start: 'paper',   end: 'eternity',   par: 4, intended: ['paper','ink','word','forever','eternity'] },
-  { start: 'piano',   end: 'ocean',      par: 3, intended: ['piano','note','wave','ocean'] },
-  { start: 'window',  end: 'confession', par: 3, intended: ['window','glass','reveal','confession'] },
-  { start: 'brick',   end: 'freedom',    par: 3, intended: ['brick','wall','break','freedom'] },
-  { start: 'river',   end: 'grief',      par: 3, intended: ['river','tear','cry','grief'] },
-  { start: 'coal',    end: 'diamond',    par: 2, intended: ['coal','pressure','diamond'] },
-  { start: 'road',    end: 'choice',     par: 3, intended: ['road','fork','decision','choice'] },
-  { start: 'mask',    end: 'truth',      par: 3, intended: ['mask','hide','reveal','truth'] },
-  { start: 'star',    end: 'grave',      par: 4, intended: ['star','night','death','bury','grave'] },
-  { start: 'cathedral',end:'echo',       par: 3, intended: ['cathedral','hall','sound','echo'] },
-  { start: 'spider',  end: 'fate',       par: 3, intended: ['spider','web','trap','fate'] },
-  { start: 'attic',   end: 'childhood',  par: 3, intended: ['attic','trunk','toy','childhood'] },
-  { start: 'clock',   end: 'death',      par: 3, intended: ['clock','time','end','death'] },
-  { start: 'ladder',  end: 'ambition',   par: 3, intended: ['ladder','climb','rise','ambition'] },
-  { start: 'wallet',  end: 'identity',   par: 3, intended: ['wallet','card','name','identity'] },
-  { start: 'radio',   end: 'solitude',   par: 3, intended: ['radio','static','silence','solitude'] },
-  { start: 'ash',     end: 'renewal',    par: 3, intended: ['ash','fire','phoenix','renewal'] },
-  // --- Month 3 (Days 61-90) ---
-  { start: 'crown',   end: 'loneliness', par: 3, intended: ['crown','king','alone','loneliness'] },
-  { start: 'mirror',  end: 'vanity',     par: 2, intended: ['mirror','reflection','vanity'] },
-  { start: 'salt',    end: 'ocean',      par: 2, intended: ['salt','sea','ocean'] },
-  { start: 'moth',    end: 'obsession',  par: 3, intended: ['moth','flame','fire','obsession'] },
-  { start: 'ink',     end: 'blood',      par: 3, intended: ['ink','red','wound','blood'] },
-  { start: 'door',    end: 'temptation', par: 3, intended: ['door','open','reveal','temptation'] },
-  { start: 'lighthouse',end:'hope',      par: 2, intended: ['lighthouse','beacon','hope'] },
-  { start: 'island',  end: 'exile',      par: 2, intended: ['island','alone','exile'] },
-  { start: 'axe',     end: 'forgiveness',par: 4, intended: ['axe','cut','wound','heal','forgiveness'] },
-  { start: 'forge',   end: 'identity',   par: 3, intended: ['forge','metal','shape','identity'] },
-  { start: 'flute',   end: 'memory',     par: 3, intended: ['flute','song','past','memory'] },
-  { start: 'pearl',   end: 'patience',   par: 3, intended: ['pearl','oyster','time','patience'] },
-  { start: 'ribbon',  end: 'promise',    par: 3, intended: ['ribbon','bow','gift','promise'] },
-  { start: 'tide',    end: 'forgetting', par: 3, intended: ['tide','wash','erase','forgetting'] },
-  { start: 'spoon',   end: 'soup',       par: 2, intended: ['spoon','bowl','soup'] },
-  { start: 'pencil',  end: 'school',     par: 2, intended: ['pencil','class','school'] },
-  { start: 'pillow',  end: 'memory',     par: 3, intended: ['pillow','dream','past','memory'] },
-  { start: 'bird',    end: 'courage',    par: 3, intended: ['bird','fly','fear','courage'] },
-  { start: 'echo',    end: 'mountain',   par: 3, intended: ['echo','sound','peak','mountain'] },
-  { start: 'compass', end: 'desire',     par: 4, intended: ['compass','direction','journey','want','desire'] },
-  { start: 'engine',  end: 'heart',      par: 3, intended: ['engine','machine','pump','heart'] },
-  { start: 'map',     end: 'loneliness', par: 4, intended: ['map','journey','distance','alone','loneliness'] },
-  { start: 'thread',  end: 'universe',   par: 4, intended: ['thread','string','space','cosmos','universe'] },
-  { start: 'candle',  end: 'revolution', par: 4, intended: ['candle','flame','spark','uprising','revolution'] },
-  { start: 'prism',   end: 'silence',    par: 4, intended: ['prism','rainbow','color','calm','silence'] },
-  { start: 'harbor',  end: 'ghost',      par: 4, intended: ['harbor','ship','wreck','dead','ghost'] },
-  { start: 'algebra', end: 'love',       par: 4, intended: ['algebra','equation','balance','union','love'] },
-  { start: 'factory', end: 'dream',      par: 4, intended: ['factory','worker','tired','sleep','dream'] },
-  { start: 'atom',    end: 'laughter',   par: 5, intended: ['atom','energy','life','joy','smile','laughter'] },
-  { start: 'autumn',  end: 'lullaby',    par: 4, intended: ['autumn','leaves','wind','song','lullaby'] },
+  ['dog',   'bone',   'break',  'dance',   'party'],   // breakdance, dance at a party
+  ['sun',   'burn',   'match',  'game',    'play'],    // sunburn, burning match, game=match, gameplay
+  ['fire',  'smoke',  'signal', 'phone',   'call'],    // smoke signal, phone signal, phone call
+  ['rain',  'bow',    'tie',    'knot',    'sailor'],  // rainbow, bow tie, tie a knot, sailor's knot
+  ['cold',  'ice',    'rink',   'skate',   'board'],   // ice rink, skate rink, skateboard
+  ['moon',  'light',  'house',  'boat',    'captain'], // moonlight, lighthouse, houseboat
+  ['star',  'fish',   'hook',   'line',    'story'],   // starfish, fishhook, hook & line, storyline
+  ['cat',   'mouse',  'trap',   'door',    'bell'],    // cat & mouse, mousetrap, trapdoor, doorbell
+  ['hand',  'shake',  'milk',   'cow',     'boy'],     // handshake, milkshake, milk cow, cowboy
+  ['bread', 'crumb',  'trail',  'blaze',   'fire'],    // breadcrumb, crumb trail, blaze a trail, blaze=fire
+  ['eye',   'lash',   'out',    'break',   'through'], // eyelash, lash out, outbreak, breakthrough
+  ['foot',  'ball',   'park',   'bench',   'mark'],    // football, ballpark, park bench, benchmark
+  ['book',  'worm',   'hole',   'punch',   'line'],    // bookworm, wormhole, hole punch, punchline
+  ['sea',   'horse',  'race',   'track',   'record'],  // seahorse, horse race, racetrack, track record
+  ['head',  'ache',   'pain',   'killer',  'whale'],   // headache, ache=pain, painkiller, killer whale
+  ['door',  'step',   'ladder', 'snake',   'bite'],    // doorstep, stepladder, snakes & ladders, snakebite
+  ['key',   'board',  'game',   'night',   'owl'],     // keyboard, board game, game night, night owl
+  ['rock',  'slide',  'show',   'off',     'road'],    // rockslide, slideshow, show off, off-road
+  ['arm',   'band',   'stand',  'up',      'beat'],    // armband, bandstand, stand up, upbeat
+  ['wind',  'mill',   'stone',  'wall',    'flower'],  // windmill, millstone, stone wall, wallflower
+  ['hair',  'pin',    'point',  'blank',   'check'],   // hairpin, pinpoint, point blank, blank check
+  ['water', 'fall',   'back',   'yard',    'sale'],    // waterfall, fall back, backyard, yard sale
+  ['air',   'craft',  'beer',   'garden',  'party'],   // aircraft, craft beer, beer garden, garden party
+  ['snow',  'board',  'room',   'service', 'desk'],    // snowboard, boardroom, room service, service desk
+  ['ear',   'ring',   'leader', 'ship',    'wreck'],   // earring, ringleader, leadership, shipwreck
+  ['black', 'bird',   'cage',   'match',   'stick'],   // blackbird, birdcage, cage match, matchstick
+  ['blue',  'print',  'screen', 'play',    'ground'],  // blueprint, print screen, screenplay, playground
+  ['night', 'fall',   'back',   'stage',   'fright'],  // nightfall, fall back, backstage, stage fright
+  ['long',  'bow',    'tie',    'break',   'down'],    // longbow, bow tie, tiebreaker, breakdown
+  ['over',  'board',  'walk',   'way',     'out'],     // overboard, boardwalk, walkway, way out
+  // Month 2
+  ['back',  'fire',   'work',   'shop',    'lift'],    // backfire, firework, workshop, shoplifting
+  ['under', 'cover',  'age',    'less',    'on'],      // undercover, coverage, ageless, lesson
+  ['grand', 'stand',  'still',  'life',    'time'],    // grandstand, standstill, stilllife, lifetime
+  ['high',  'light',  'year',   'book',    'end'],     // highlight, light-year, yearbook, bookend
+  ['side',  'walk',   'out',    'door',    'step'],    // sidewalk, walkout, outdoor, doorstep
+  ['play',  'ground', 'work',   'force',   'field'],   // playground, groundwork, workforce, forcefield
+  ['cross', 'word',   'play',   'maker',   'space'],   // crossword, wordplay, playmaker, workspace
+  ['up',    'stream', 'line',   'up',      'town'],    // upstream... hmm this reuses 'up'
+  // replace
+  ['sun',   'flower', 'pot',    'luck',    'box'],     // sunflower, flowerpot, potluck, luckbox - but duplicate sun
+  // better new ones
+  ['egg',   'shell',  'fish',   'tank',    'top'],     // eggshell, shellfish, fish tank, tank top
+  ['eye',   'sight',  'less',   'on',      'line'],    // eyesight... 'on line' = online
+  ['ink',   'well',   'being',  'done',    'deal'],    // inkwell, wellbeing, well done, done deal
+  ['lip',   'stick',  'up',     'beat',    'box'],     // lipstick, stick up, upbeat, beatbox
+  ['arm',   'pit',    'stop',   'watch',   'dog'],     // armpit, pit stop, stopwatch, watchdog
+  ['card',  'board',  'walk',   'about',   'turn'],    // cardboard, boardwalk, walkabout, about-turn
+  ['gold',  'fish',   'eye',    'lid',     'less'],    // goldfish, fish-eye, eyelid, lidless
+  ['over',  'night',  'cap',    'size',    'able'],    // overnight, nightcap, capsizing... hmm
 ];
 
-// --- Daily seed --------------------------------------------
-// Pick today's puzzle by hashing the UTC date. Same date worldwide = same puzzle.
-// Day 1 = Monday, May 25, 2026 (launch).
-const LAUNCH_EPOCH = new Date(Date.UTC(2026, 4, 25)); // month is 0-indexed: 4 = May
+// trim to clean 30 and remove any dupes/weirdness
+const CLEAN_PUZZLES = [
+  ['dog',   'bone',   'break',  'dance',   'party'],
+  ['sun',   'burn',   'match',  'game',    'play'],
+  ['fire',  'smoke',  'signal', 'phone',   'call'],
+  ['rain',  'bow',    'tie',    'knot',    'sailor'],
+  ['cold',  'ice',    'rink',   'skate',   'board'],
+  ['moon',  'light',  'house',  'boat',    'captain'],
+  ['star',  'fish',   'hook',   'line',    'story'],
+  ['cat',   'mouse',  'trap',   'door',    'bell'],
+  ['hand',  'shake',  'milk',   'cow',     'boy'],
+  ['bread', 'crumb',  'trail',  'blaze',   'fire'],
+  ['eye',   'lash',   'out',    'break',   'through'],
+  ['foot',  'ball',   'park',   'bench',   'mark'],
+  ['book',  'worm',   'hole',   'punch',   'line'],
+  ['sea',   'horse',  'race',   'track',   'record'],
+  ['head',  'ache',   'pain',   'killer',  'whale'],
+  ['door',  'step',   'ladder', 'snake',   'bite'],
+  ['key',   'board',  'game',   'night',   'owl'],
+  ['rock',  'slide',  'show',   'off',     'road'],
+  ['arm',   'band',   'stand',  'up',      'beat'],
+  ['wind',  'mill',   'stone',  'wall',    'flower'],
+  ['hair',  'pin',    'point',  'blank',   'check'],
+  ['water', 'fall',   'back',   'yard',    'sale'],
+  ['air',   'craft',  'beer',   'garden',  'party'],
+  ['snow',  'board',  'room',   'service', 'desk'],
+  ['ear',   'ring',   'leader', 'ship',    'wreck'],
+  ['black', 'bird',   'cage',   'match',   'stick'],
+  ['blue',  'print',  'screen', 'play',    'ground'],
+  ['night', 'fall',   'back',   'stage',   'fright'],
+  ['egg',   'shell',  'fish',   'tank',    'top'],
+  ['ink',   'well',   'being',  'done',    'deal'],
+  ['lip',   'stick',  'up',     'beat',    'box'],
+  ['arm',   'pit',    'stop',   'watch',   'dog'],
+  ['card',  'board',  'walk',   'about',   'turn'],
+  ['long',  'bow',    'tie',    'break',   'down'],
+  ['over',  'board',  'walk',   'way',     'out'],
+];
+
+// Day 1 = Monday, May 25, 2026 (launch)
+const LAUNCH_EPOCH = new Date(Date.UTC(2026, 4, 25));
+
 function dayIndex() {
   const now = new Date();
   const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
-  return Math.floor((today - LAUNCH_EPOCH) / (1000 * 60 * 60 * 24));
+  return Math.floor((today - LAUNCH_EPOCH) / 86400000);
 }
 function isLaunched() { return dayIndex() >= 0; }
-function daysUntilLaunch() {
-  const d = -dayIndex();
-  return d > 0 ? d : 0;
-}
+function daysUntilLaunch() { return Math.max(0, -dayIndex()); }
 function todaysPuzzle() {
   const idx = dayIndex();
-  if (idx < 0) {
-    // Pre-launch: show Day 1's puzzle as a playable preview
-    return { day: 0, puzzle: PUZZLES[0], preview: true };
-  }
-  return { day: idx, puzzle: PUZZLES[idx % PUZZLES.length] };
+  const i = idx < 0 ? 0 : idx % CLEAN_PUZZLES.length;
+  return { day: Math.max(0, idx), puzzle: CLEAN_PUZZLES[i], preview: idx < 0 };
 }
 function todaysDateStr() {
-  const d = new Date();
-  return d.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+  return new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
 }
 
-// --- Validation via Datamuse API ----------------------------
-// Free, no API key, CORS-enabled. We cache aggressively in localStorage so each
-// (a, b) pair is only ever queried once per device.
-const DATAMUSE = 'https://api.datamuse.com/words';
-const assocCache = JSON.parse(localStorage.getItem(STORAGE_KEY + '.cache') || '{}');
-function saveCache() {
-  try { localStorage.setItem(STORAGE_KEY + '.cache', JSON.stringify(assocCache)); }
-  catch (e) {}
-}
-
-async function fetchRel(word, rel, max = 200) {
-  word = word.toLowerCase().trim();
-  const key = `${rel}:${word}:${max}`;
-  if (assocCache[key]) return assocCache[key];
-  try {
-    const resp = await fetch(`${DATAMUSE}?${rel}=${encodeURIComponent(word)}&max=${max}`);
-    if (!resp.ok) return [];
-    const data = await resp.json();
-    const list = data.map(d => d.word.toLowerCase());
-    assocCache[key] = list;
-    saveCache();
-    return list;
-  } catch (e) {
-    return [];
-  }
-}
-
-// A link between A and B is valid if any of these is true:
-//   - B appears among the top trigger associations of A (rel_trg)
-//   - A appears among the top trigger associations of B (reverse)
-//   - B is a synonym of A (rel_syn)
-//   - B is "meaning-like" A (ml — broad semantic similarity)
-//   - B is a hypernym/hyponym of A (rel_spc / rel_gen)
-async function isValidLink(a, b) {
-  a = a.toLowerCase().trim();
-  b = b.toLowerCase().trim();
-  if (!a || !b || a === b) return { valid: false, reason: 'same word' };
-
-  // Quick: exact phrase match in either trigger direction
-  const triggers = await fetchRel(a, 'rel_trg', 300);
-  if (triggers.includes(b)) return { valid: true, elegant: false };
-
-  const reverse = await fetchRel(b, 'rel_trg', 300);
-  if (reverse.includes(a)) return { valid: true, elegant: false };
-
-  // Synonyms, hypernyms, hyponyms
-  const syns = await fetchRel(a, 'rel_syn', 100);
-  if (syns.includes(b)) return { valid: true, elegant: false };
-  const spc = await fetchRel(a, 'rel_spc', 100);
-  if (spc.includes(b)) return { valid: true, elegant: false };
-  const gen = await fetchRel(a, 'rel_gen', 100);
-  if (gen.includes(b)) return { valid: true, elegant: false };
-
-  // Broader "means like" — accepts loose semantic similarity. Flag as elegant
-  // if it shows up here but didn't show in any of the tighter relations.
-  const ml = await fetchRel(a, 'ml', 200);
-  if (ml.includes(b)) return { valid: true, elegant: true };
-
-  // Reverse "means like"
-  const mlR = await fetchRel(b, 'ml', 200);
-  if (mlR.includes(a)) return { valid: true, elegant: true };
-
-  return { valid: false, reason: 'no association found' };
-}
-
-// Word must exist as an English word (not just a typo).
-async function isRealWord(w) {
-  w = w.toLowerCase().trim();
-  if (!w) return false;
-  if (/^[a-z]{1,24}$/.test(w) === false) return false;
-  // Datamuse 'sp' (spelled-like) — if there's an exact match at score 100+, it's real
-  const key = `real:${w}`;
-  if (assocCache[key] !== undefined) return assocCache[key] === 1;
-  try {
-    const resp = await fetch(`${DATAMUSE}?sp=${encodeURIComponent(w)}&max=5`);
-    const data = await resp.json();
-    const real = data.length > 0 && data[0].word.toLowerCase() === w;
-    assocCache[key] = real ? 1 : 0;
-    saveCache();
-    return real;
-  } catch (e) {
-    return true; // fail open — don't block on network errors
-  }
-}
-
-// --- Game state --------------------------------------------
+// --- Game state ---
 let state = {
   day: 0,
   puzzle: null,
-  chain: [],         // [{word, elegant}]
+  step: 0,
+  revealed: [0, 0, 0],
+  wrongs: [[], [], []],
+  solved: [false, false, false],
   complete: false,
   gaveUp: false,
-  busy: false,
 };
 const stats = loadStats();
 
 function loadStats() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return { lastPlayed: 0, streak: 0, totalWins: 0, history: {} };
-    return JSON.parse(raw);
-  } catch (e) { return { lastPlayed: 0, streak: 0, totalWins: 0, history: {} }; }
+    const r = localStorage.getItem(STORAGE_KEY);
+    if (!r) return { lastPlayed: -1, streak: 0, totalWins: 0, history: {} };
+    return JSON.parse(r);
+  } catch(e) { return { lastPlayed: -1, streak: 0, totalWins: 0, history: {} }; }
 }
 function saveStats() {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(stats)); } catch (e) {}
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(stats)); } catch(e) {}
 }
 
-// --- Rendering ---------------------------------------------
+function bridgeWord(s) { return state.puzzle[s + 1]; }
+function prevWord(s)   { return state.puzzle[s]; }
+function numSteps()    { return state.puzzle.length - 2; }
+function totalHints()  { return state.revealed.reduce((a, b) => a + b, 0); }
+function totalWrongs() { return state.wrongs.reduce((a, b) => a + b.length, 0); }
+
+// --- Rendering ---
 function $(id) { return document.getElementById(id); }
 
 function renderHeader() {
   if (!isLaunched()) {
     const d = daysUntilLaunch();
-    const launchStr = LAUNCH_EPOCH.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
-    $('subtitle').textContent = `Preview · launches ${launchStr} (${d} day${d === 1 ? '' : 's'} to go)`;
+    const ls = LAUNCH_EPOCH.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+    $('subtitle').textContent = `Preview · launches ${ls} (${d} day${d===1?'':'s'} to go)`;
   } else {
     $('subtitle').textContent = `Daily Puzzle · Day ${state.day + 1} · ${todaysDateStr()}`;
   }
-  $('start-word').textContent = state.puzzle.start.toUpperCase();
-  $('end-word').textContent = state.puzzle.end.toUpperCase();
 }
 
 function renderChain() {
-  const el = $('chain');
-  if (state.chain.length === 0) {
-    el.innerHTML = `<div class="chain-empty">start by typing a word that connects to ${state.puzzle.start.toUpperCase()}</div>`;
-    return;
-  }
+  const p = state.puzzle;
+  const ns = numSteps();
   const parts = [];
-  // Start pill
-  parts.push(`<span class="link"><span class="pill start">${state.puzzle.start}</span></span>`);
-  state.chain.forEach((entry, i) => {
-    parts.push(`<span class="arrow">→</span>`);
-    const cls = entry.elegant ? 'elegant' : 'valid';
-    const last = i === state.chain.length - 1 && !state.complete;
-    const removeBtn = last ? `<span class="remove" data-i="${i}" title="remove">✕</span>` : '';
-    const isEnd = entry.word.toLowerCase() === state.puzzle.end.toLowerCase();
-    parts.push(`<span class="link"><span class="pill ${isEnd ? 'end' : cls}">${entry.word}${removeBtn}</span></span>`);
-  });
-  el.innerHTML = parts.join('');
-  el.querySelectorAll('.remove').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const i = parseInt(btn.getAttribute('data-i'), 10);
-      state.chain = state.chain.slice(0, i);
-      saveProgress();
-      renderAll();
-    });
-  });
+  parts.push(`<span class="cn start">${p[0].toUpperCase()}</span>`);
+  for (let i = 0; i < ns; i++) {
+    parts.push(`<span class="chain-arrow">→</span>`);
+    let cls, label;
+    if (state.solved[i]) {
+      cls = 'solved'; label = p[i+1].toUpperCase();
+    } else if (state.gaveUp) {
+      cls = 'giveup'; label = p[i+1].toUpperCase();
+    } else if (i === state.step && !state.complete) {
+      cls = 'active'; label = '?????';
+    } else {
+      cls = 'pending'; label = '?????';
+    }
+    parts.push(`<span class="cn ${cls}">${label}</span>`);
+  }
+  parts.push(`<span class="chain-arrow">→</span>`);
+  parts.push(`<span class="cn finish">${p[p.length-1].toUpperCase()}</span>`);
+  $('chain-row').innerHTML = parts.join('');
+}
+
+function renderTiles() {
+  if (state.complete) { $('tiles').innerHTML = ''; return; }
+  const word = bridgeWord(state.step);
+  const rev  = state.revealed[state.step];
+  const parts = [];
+  for (let i = 0; i < word.length; i++) {
+    const isRev = i < rev;
+    parts.push(`<div class="tile${isRev ? ' revealed' : ''}">${isRev ? word[i].toUpperCase() : '·'}</div>`);
+  }
+  $('tiles').innerHTML = parts.join('');
+}
+
+function renderWrongs() {
+  if (state.complete) { $('wrongs').innerHTML = ''; return; }
+  const ws = state.wrongs[state.step];
+  $('wrongs').innerHTML = ws.map(w => `<span class="wrong-pill">${w}</span>`).join('');
 }
 
 function renderProgress() {
-  $('par').textContent = state.puzzle.par;
-  $('your-links').textContent = state.chain.length;
+  $('step-display').textContent = state.complete ? '✓' : `${state.step + 1}/${numSteps()}`;
+  $('hints-used').textContent = totalHints();
   $('streak').textContent = stats.streak || 0;
+}
+
+function renderPrompt() {
+  if (state.complete) { $('step-prompt').innerHTML = ''; return; }
+  const ns = numSteps();
+  const before = prevWord(state.step).toUpperCase();
+  const after  = state.puzzle[state.step + 2]
+    ? (state.solved[state.step + 1] || state.gaveUp
+        ? state.puzzle[state.step + 2].toUpperCase()
+        : '?')
+    : state.puzzle[state.puzzle.length - 1].toUpperCase();
+  $('step-prompt').innerHTML =
+    `Word between <strong>${before}</strong> and <strong>${after}</strong> &nbsp;·&nbsp; Step ${state.step + 1} of ${ns}`;
 }
 
 function renderCompletion() {
   const host = $('complete-host');
   if (!state.complete) { host.innerHTML = ''; return; }
-  const links = state.chain.length;
-  const par = state.puzzle.par;
-  let stars = 1;
-  if (links <= par) stars = 3;
-  else if (links <= par + 1) stars = 2;
-  const starStr = '★★★'.slice(0, stars) + '<span class="star-off">' + '★★★'.slice(0, 3 - stars) + '</span>';
-  const heading = state.gaveUp ? 'Bridge Closed' : 'Bridge Complete';
-  const message = state.gaveUp
-    ? 'Maybe tomorrow.'
-    : (links <= par ? 'Elegant solve.' : links <= par + 1 ? 'Solid bridge.' : 'You got there.');
+  const tw = totalWrongs();
+  let stars = tw === 0 ? 3 : tw <= 2 ? 2 : 1;
+  if (state.gaveUp) stars = 0;
+  const starStr = '★'.repeat(stars) + `<span class="star-off">${'★'.repeat(3 - stars)}</span>`;
+  const heading = state.gaveUp ? 'Bridge Collapsed' : 'Bridge Complete!';
+  const msg = state.gaveUp ? 'Try again tomorrow.' : tw === 0 ? 'Flawless!' : tw <= 2 ? 'Nice solve.' : 'You got there.';
   host.innerHTML = `
     <div class="complete">
       <h2>${heading}</h2>
       <div class="stars">${starStr}</div>
-      <p>${message}</p>
+      <p>${msg}</p>
       <div class="summary-grid">
-        <div><span>Your Links</span><strong>${links}</strong></div>
-        <div><span>Par</span><strong>${par}</strong></div>
+        <div><span>Hints Used</span><strong>${totalHints()}</strong></div>
+        <div><span>Wrong Guesses</span><strong>${tw}</strong></div>
       </div>
       <div class="actions">
         <button class="btn primary" id="share-btn">SHARE</button>
-        <button class="btn" id="see-path-btn">SHOW EXAMPLE</button>
       </div>
-      <div id="example-host" style="margin-top:14px;"></div>
     </div>
   `;
   $('share-btn').addEventListener('click', shareResult);
-  $('see-path-btn').addEventListener('click', () => {
-    const ex = state.puzzle.intended;
-    if (!ex) { $('example-host').innerHTML = '<p style="color:var(--ink-dim);font-size:13px;">No example available.</p>'; return; }
-    const parts = ex.map((w, i) => i === 0 ? `<span class="pill start">${w}</span>` : (i === ex.length - 1 ? `<span class="pill end">${w}</span>` : `<span class="pill valid">${w}</span>`));
-    $('example-host').innerHTML = `<div class="chain" style="margin:0;">${parts.map((p, i) => i === 0 ? p : `<span class="arrow">→</span>${p}`).join('')}</div>`;
-  });
 }
 
 function renderAll() {
   renderHeader();
   renderChain();
+  renderPrompt();
+  renderTiles();
+  renderWrongs();
   renderProgress();
   renderCompletion();
-  $('word-input').disabled = state.complete;
-  $('add-btn').disabled = state.complete || state.busy;
-  $('undo-btn').disabled = state.complete || state.chain.length === 0;
-  $('giveup-btn').disabled = state.complete;
+  const done = state.complete;
+  $('word-input').disabled = done;
+  $('add-btn').disabled = done;
+  $('giveup-btn').disabled = done;
+  $('step-area').style.display = done ? 'none' : '';
 }
 
-// --- Game actions ------------------------------------------
+// --- Game actions ---
 function setMsg(text, kind = '') {
   const el = $('input-msg');
   el.textContent = text;
   el.className = 'input-msg' + (kind ? ' ' + kind : '');
 }
 
-async function attemptAdd() {
-  if (state.busy || state.complete) return;
+function attemptGuess() {
+  if (state.complete) return;
   const raw = $('word-input').value.trim().toLowerCase();
-  if (!raw) { setMsg('type a word', 'err'); return; }
-  if (!/^[a-z][a-z\-']{0,23}$/.test(raw)) { setMsg('letters only', 'err'); shakeInput(); return; }
+  if (!raw) { setMsg('type a word first', 'err'); return; }
+  if (!/^[a-z]{1,24}$/.test(raw)) { setMsg('letters only, no spaces', 'err'); shakeInput(); return; }
 
-  // Already used?
-  const prev = state.chain.length > 0 ? state.chain[state.chain.length - 1].word : state.puzzle.start;
-  if (raw === prev) { setMsg(`same as previous word`, 'err'); shakeInput(); return; }
-  if (raw === state.puzzle.start) { setMsg('that\'s the start word', 'err'); shakeInput(); return; }
-  if (state.chain.some(c => c.word.toLowerCase() === raw)) {
-    setMsg('word already in your chain', 'err'); shakeInput(); return;
-  }
+  const target = bridgeWord(state.step);
 
-  state.busy = true;
-  setMsg('checking association…', 'loading');
-  renderAll();
-
-  // Validate it's a real word
-  const real = await isRealWord(raw);
-  if (!real) {
-    state.busy = false;
-    setMsg(`"${raw}" doesn't look like a word`, 'err');
-    shakeInput(); renderAll(); return;
-  }
-
-  // Validate link to previous
-  const link = await isValidLink(prev, raw);
-  if (!link.valid) {
-    state.busy = false;
-    setMsg(`no clear connection from "${prev}" → "${raw}"`, 'err');
-    shakeInput(); renderAll(); return;
-  }
-
-  // Accept
-  state.chain.push({ word: raw, elegant: !!link.elegant });
-  $('word-input').value = '';
-  state.busy = false;
-  setMsg(link.elegant ? '✨ elegant leap' : 'valid link', 'ok');
-
-  // Check completion: is `raw` either the end word or validly linked to it?
-  if (raw === state.puzzle.end.toLowerCase()) {
-    completeGame(false);
+  if (raw === target) {
+    // Correct!
+    state.solved[state.step] = true;
+    $('word-input').value = '';
+    setMsg('', '');
+    waveCorrectTiles();
+    setTimeout(() => {
+      if (state.step === numSteps() - 1) {
+        completeGame(false);
+      } else {
+        state.step++;
+        renderAll();
+        setMsg('nice — keep going!', 'ok');
+        $('word-input').focus();
+      }
+      saveProgress();
+    }, 380);
   } else {
-    // Check whether this word connects to the end — if so, give the player a hint
-    const toEnd = await isValidLink(raw, state.puzzle.end);
-    if (toEnd.valid) {
-      // Offer the option: chain visually shows "almost there" hint
-      setMsg(`✨ "${raw}" connects directly to ${state.puzzle.end.toUpperCase()} — add it!`, 'ok');
+    // Wrong
+    if (state.wrongs[state.step].includes(raw)) {
+      setMsg(`already tried "${raw}"`, 'err');
+      shakeInput();
+      return;
     }
+    state.wrongs[state.step].push(raw);
+    const word = bridgeWord(state.step);
+    state.revealed[state.step] = Math.min(state.revealed[state.step] + 1, word.length);
+    $('word-input').value = '';
+    const rev = state.revealed[state.step];
+    const hint = rev < word.length ? `hint: ${word.slice(0,rev).toUpperCase()}${'·'.repeat(word.length - rev)}` : 'no more hints!';
+    setMsg(`not quite — ${hint}`, 'err');
+    shakeInput();
+    saveProgress();
+    renderAll();
+    $('word-input').focus();
   }
-  saveProgress();
-  renderAll();
+}
+
+function waveCorrectTiles() {
+  const tiles = $('tiles').querySelectorAll('.tile');
+  tiles.forEach((t, i) => {
+    t.classList.add('correct');
+    t.textContent = bridgeWord(state.step)[i].toUpperCase();
+  });
+  tiles.forEach((t, i) => {
+    t.style.animation = 'none';
+    setTimeout(() => { t.style.animation = `tile-wave 0.5s ${i * 0.07}s ease-in-out`; }, 10);
+  });
 }
 
 function shakeInput() {
@@ -814,56 +718,37 @@ function shakeInput() {
 function completeGame(gaveUp) {
   state.complete = true;
   state.gaveUp = gaveUp;
-  // Update stats
-  const key = String(state.day);
   if (!gaveUp) {
     stats.totalWins = (stats.totalWins || 0) + 1;
-    // Streak: did we play yesterday?
     const yesterday = state.day - 1;
-    if (!stats.history[String(yesterday)] || !stats.history[String(yesterday)].won) {
-      if (stats.lastPlayed === yesterday) stats.streak = (stats.streak || 0) + 1;
-      else stats.streak = 1;
-    } else {
-      stats.streak = (stats.streak || 0) + 1;
-    }
+    if (stats.lastPlayed === yesterday) stats.streak = (stats.streak || 0) + 1;
+    else if (stats.lastPlayed !== state.day) stats.streak = 1;
     stats.lastPlayed = state.day;
   }
-  stats.history[key] = {
+  stats.history[String(state.day)] = {
     won: !gaveUp,
-    links: state.chain.length,
-    par: state.puzzle.par,
-    chain: state.chain.map(c => c.word),
+    hints: totalHints(),
+    wrongs: totalWrongs(),
     date: Date.now(),
   };
   saveStats();
   saveProgress();
   renderAll();
-  if (!gaveUp) {
-    setTimeout(throwConfetti, 200);
-    toast('Bridge complete!');
-  }
-}
-
-function undo() {
-  if (state.chain.length === 0) return;
-  state.chain.pop();
-  saveProgress();
-  setMsg('reverted', '');
-  renderAll();
+  if (!gaveUp) setTimeout(throwConfetti, 250);
 }
 
 function giveUp() {
-  if (!confirm('Give up on today\'s bridge? You can see the example path after.')) return;
+  if (!confirm('Give up on today\'s bridge?')) return;
   completeGame(true);
 }
 
 function shareResult() {
-  const links = state.chain.length;
-  const par = state.puzzle.par;
-  const stars = state.gaveUp ? 0 : (links <= par ? 3 : links <= par + 1 ? 2 : 1);
-  const starStr = '⭐'.repeat(stars) + (stars === 0 ? '—' : '');
-  const emojiChain = state.chain.map(c => c.elegant ? '🟡' : '🟢').join('');
-  const txt = `Semantic Bridge · Day ${state.day + 1}\n${state.puzzle.start.toUpperCase()} → ${state.puzzle.end.toUpperCase()}\n${state.gaveUp ? '(gave up)' : starStr + ' · ' + links + '/' + par + ' links'}\n${emojiChain}`;
+  const tw = totalWrongs();
+  const th = totalHints();
+  const stars = state.gaveUp ? 0 : tw === 0 ? 3 : tw <= 2 ? 2 : 1;
+  const starStr = '⭐'.repeat(stars) || '—';
+  const path = state.puzzle.join(' → ').toUpperCase();
+  const txt = `Semantic Bridge · Day ${state.day + 1}\n${path}\n${state.gaveUp ? '(gave up)' : starStr}\nHints: ${th} · Wrong: ${tw}`;
   if (navigator.share) {
     navigator.share({ text: txt }).catch(() => copyToClipboard(txt));
   } else {
@@ -877,15 +762,14 @@ function copyToClipboard(text) {
       () => toast('Copied to clipboard'),
       () => fallbackCopy(text)
     );
-  } catch (e) { fallbackCopy(text); }
+  } catch(e) { fallbackCopy(text); }
 }
 function fallbackCopy(text) {
   const t = document.createElement('textarea'); t.value = text;
   document.body.appendChild(t); t.select();
-  try { document.execCommand('copy'); toast('Copied'); } catch (e) {}
+  try { document.execCommand('copy'); toast('Copied'); } catch(e) {}
   t.remove();
 }
-
 function toast(msg) {
   const el = document.createElement('div');
   el.className = 'toast'; el.textContent = msg;
@@ -893,32 +777,26 @@ function toast(msg) {
   setTimeout(() => el.remove(), 1800);
 }
 
-// --- Save / restore in-progress chain ----------------------
+// --- Progress persistence ---
 function saveProgress() {
-  const data = {
-    day: state.day,
-    chain: state.chain,
-    complete: state.complete,
-    gaveUp: state.gaveUp,
-  };
-  try { localStorage.setItem(STORAGE_KEY + '.progress', JSON.stringify(data)); }
-  catch (e) {}
+  const d = { day: state.day, step: state.step, revealed: state.revealed, wrongs: state.wrongs, solved: state.solved, complete: state.complete, gaveUp: state.gaveUp };
+  try { localStorage.setItem(STORAGE_KEY + '.p', JSON.stringify(d)); } catch(e) {}
 }
 function loadProgress() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY + '.progress');
-    if (!raw) return null;
-    const data = JSON.parse(raw);
-    if (data.day !== state.day) return null; // different day — fresh start
-    return data;
-  } catch (e) { return null; }
+    const r = localStorage.getItem(STORAGE_KEY + '.p');
+    if (!r) return null;
+    const d = JSON.parse(r);
+    if (d.day !== state.day) return null;
+    return d;
+  } catch(e) { return null; }
 }
 
-// --- Confetti ----------------------------------------------
+// --- Confetti ---
 function throwConfetti() {
   const wrap = document.createElement('div');
   wrap.className = 'confetti';
-  const colors = ['#2e7d5b', '#c89b3c', '#1c1c1c', '#b94a3a', '#5b6cff'];
+  const colors = ['#2e7d5b','#c89b3c','#1c1c1c','#b94a3a','#5b6cff'];
   for (let i = 0; i < 60; i++) {
     const s = document.createElement('span');
     s.style.left = Math.random() * 100 + 'vw';
@@ -934,7 +812,7 @@ function throwConfetti() {
   setTimeout(() => wrap.remove(), 3200);
 }
 
-// --- Modals ------------------------------------------------
+// --- Modals ---
 function showModal(html) {
   const bg = document.createElement('div');
   bg.className = 'modal-bg';
@@ -942,100 +820,99 @@ function showModal(html) {
   document.body.appendChild(bg);
   bg.querySelector('.close').addEventListener('click', () => bg.remove());
   bg.addEventListener('click', (e) => { if (e.target === bg) bg.remove(); });
-  return bg;
 }
 
 function showHelp() {
   showModal(`
     <h2>How to Play</h2>
-    <p>Connect <strong>two distant words</strong> with a chain of related words. Each word you add must be linked by meaning to the one before it.</p>
+    <p>Each puzzle hides <strong>3 bridge words</strong> between a start and an end. The words connect like compound words or classic associations — each pair makes a natural link.</p>
     <div class="example">
-      DOG → COLLAR → CHAIN → CHURCH → FAITH
+      DOG → BONE → BREAK → DANCE → PARTY<br>
+      <small style="color:var(--ink-dim)">dog+bone · break+bone · break+dance · dance+party</small>
     </div>
-    <h3>The rules</h3>
-    <p>• Each link must be an association the game recognizes (synonyms, things commonly mentioned together, related concepts).</p>
-    <p>• You can't reuse words you've already chained.</p>
-    <p>• <strong>Shorter chains score better.</strong> Try to match or beat par.</p>
+    <h3>Guessing</h3>
+    <p>Type your guess for the current bridge word and press <strong>GUESS</strong> or Enter. You don't need to know all three at once — solve them one at a time.</p>
+    <h3>Hints</h3>
+    <p>Every wrong guess reveals the next letter of the answer:</p>
+    <div class="hint-demo">
+      <div class="tile">·</div><div class="tile">·</div><div class="tile">·</div><div class="tile">·</div><div class="tile">·</div>
+    </div>
+    <p style="text-align:center;font-size:12px;color:var(--ink-dim);margin-top:-8px;">after one wrong guess →</p>
+    <div class="hint-demo">
+      <div class="tile revealed">B</div><div class="tile">·</div><div class="tile">·</div><div class="tile">·</div><div class="tile">·</div>
+    </div>
     <h3>Scoring</h3>
-    <p>• Links ≤ par → ★★★<br>• Links = par+1 → ★★<br>• Anything longer → ★</p>
-    <h3>Tips</h3>
-    <p>• Think about which words sit between your two endpoints.</p>
-    <p>• Big leaps (yellow pills, "elegant leaps") are allowed — the game accepts looser semantic similarity, but tight links feel more satisfying.</p>
-    <p>• If a word isn't accepted, try a different angle.</p>
+    <p>★★★ = zero wrong guesses &nbsp;·&nbsp; ★★ = 1–2 wrong &nbsp;·&nbsp; ★ = 3 or more</p>
   `);
 }
 
 function showStats() {
-  const wonDays = Object.values(stats.history || {}).filter(h => h && h.won);
-  const totalLinks = wonDays.reduce((a, h) => a + (h.links || 0), 0);
-  const avgLinks = wonDays.length ? (totalLinks / wonDays.length).toFixed(1) : '—';
-  const todayRecord = stats.history[String(state.day)];
-  const todayLine = todayRecord
-    ? (todayRecord.won
-        ? `<p>Today: ${todayRecord.links} links (par ${todayRecord.par})</p>`
-        : `<p>Today: gave up</p>`)
+  const won = Object.values(stats.history || {}).filter(h => h && h.won);
+  const avgH = won.length ? (won.reduce((a, h) => a + (h.hints||0), 0) / won.length).toFixed(1) : '—';
+  const today = stats.history[String(state.day)];
+  const todayLine = today
+    ? (today.won ? `<p>Today: solved · hints ${today.hints} · wrong ${today.wrongs}</p>` : `<p>Today: gave up</p>`)
     : '';
   showModal(`
     <h2>Your Stats</h2>
     ${todayLine}
     <div class="summary-grid">
-      <div><span>Current Streak</span><strong>${stats.streak || 0}</strong></div>
+      <div><span>Streak</span><strong>${stats.streak || 0}</strong></div>
       <div><span>Total Wins</span><strong>${stats.totalWins || 0}</strong></div>
       <div><span>Days Played</span><strong>${Object.keys(stats.history || {}).length}</strong></div>
-      <div><span>Avg Links</span><strong>${avgLinks}</strong></div>
+      <div><span>Avg Hints</span><strong>${avgH}</strong></div>
     </div>
-    <h3>Coming Soon</h3>
-    <p>Accounts will let you replay any past puzzle and compete on a leaderboard.</p>
   `);
 }
 
 function showAbout() {
-  const launchStr = LAUNCH_EPOCH.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
-  const launchLine = isLaunched()
-    ? `<p>Launched ${launchStr}. Day ${dayIndex() + 1} of the run.</p>`
-    : `<p>Official launch: <strong>${launchStr}</strong>. Until then this is a preview — you can play the Day 1 puzzle to get a feel for it.</p>`;
+  const ls = LAUNCH_EPOCH.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+  const line = isLaunched()
+    ? `<p>Launched ${ls}. Day ${dayIndex() + 1} of the run.</p>`
+    : `<p>Official launch: <strong>${ls}</strong>. Playing the Day 1 preview.</p>`;
   showModal(`
     <h2>About</h2>
-    <p>Semantic Bridge is a daily word puzzle. Every day at midnight UTC a new pair of words appears, and you have to connect them with a chain of associated words.</p>
-    ${launchLine}
-    <p>The game uses the free <a href="https://www.datamuse.com/api/" target="_blank" rel="noopener">Datamuse API</a> to judge whether two words are associated. Player progress, stats, and association lookups are all cached locally — no accounts, no tracking.</p>
+    <p>Semantic Bridge is a daily word puzzle. Connect a start word to an end word through three hidden bridge words — each pair forms a compound word or a natural association.</p>
+    ${line}
+    <p>No API, no accounts, no tracking. Progress is saved locally.</p>
     <p>Made by an enthusiast. Free, open.</p>
   `);
 }
 
-// --- Init --------------------------------------------------
+// --- Init ---
 function init() {
   const today = todaysPuzzle();
-  state.day = today.day;
+  state.day    = today.day;
   state.puzzle = today.puzzle;
+  state.revealed = new Array(numSteps()).fill(0);
+  state.wrongs   = Array.from({ length: numSteps() }, () => []);
+  state.solved   = new Array(numSteps()).fill(false);
 
-  // Restore in-progress
   const progress = loadProgress();
   if (progress) {
-    state.chain = progress.chain || [];
+    state.step     = progress.step     ?? 0;
+    state.revealed = progress.revealed ?? state.revealed;
+    state.wrongs   = progress.wrongs   ?? state.wrongs;
+    state.solved   = progress.solved   ?? state.solved;
     state.complete = !!progress.complete;
-    state.gaveUp = !!progress.gaveUp;
+    state.gaveUp   = !!progress.gaveUp;
   }
 
   renderAll();
 
-  $('add-btn').addEventListener('click', attemptAdd);
-  $('word-input').addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') { e.preventDefault(); attemptAdd(); }
-  });
-  $('undo-btn').addEventListener('click', undo);
+  $('add-btn').addEventListener('click', attemptGuess);
+  $('word-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); attemptGuess(); } });
   $('giveup-btn').addEventListener('click', giveUp);
   $('help-btn').addEventListener('click', showHelp);
   $('stats-btn').addEventListener('click', showStats);
   $('about-link').addEventListener('click', (e) => { e.preventDefault(); showAbout(); });
 
-  // First-time players see help
-  if (!localStorage.getItem(STORAGE_KEY + '.seen-help')) {
+  if (!localStorage.getItem(STORAGE_KEY + '.seen')) {
     setTimeout(showHelp, 400);
-    localStorage.setItem(STORAGE_KEY + '.seen-help', '1');
+    localStorage.setItem(STORAGE_KEY + '.seen', '1');
   }
 
-  $('word-input').focus();
+  if (!state.complete) $('word-input').focus();
 }
 
 init();
