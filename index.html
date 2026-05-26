@@ -440,7 +440,17 @@ const PUZZLES = [
   ['over',  'night',  'cap',    'size',    'able'],    // overnight, nightcap, capsizing... hmm
 ];
 
-// trim to clean 30 and remove any dupes/weirdness
+// ─────────────────────────────────────────────────────────────
+// v1.01 — fixed-path redesign
+//
+// Each puzzle is a fixed 5-word chain: [start, b1, b2, b3, end].
+// Adjacent pairs connect via a compound word or strong
+// association. The player sees start and end; bridge words b1–b3
+// are hidden and revealed one at a time. No branching, no
+// alternate solutions — exactly one canonical path per puzzle.
+//
+// 35 puzzles below = 35-day pool before repeat.
+// ─────────────────────────────────────────────────────────────
 const CLEAN_PUZZLES = [
   ['dog',   'bone',   'break',  'dance',   'party'],
   ['sun',   'burn',   'match',  'game',    'play'],
