@@ -173,6 +173,7 @@
   }
   .input-msg.err { color: var(--warn); }
   .input-msg.ok  { color: var(--accent); }
+  .input-msg.warm { color: var(--gold); }
 
   @keyframes shake {
     10%, 90% { transform: translateX(-1px); }
@@ -479,8 +480,8 @@ const CLEAN_PUZZLES = [
   ['over',  'board',  'walk',   'way',     'out'],
 ];
 
-// Day 1 = Monday, May 25, 2026 (launch)
-const LAUNCH_EPOCH = new Date(Date.UTC(2026, 4, 25));
+// Day 1 = Tuesday, June 9, 2026 (launch)
+const LAUNCH_EPOCH = new Date(Date.UTC(2026, 5, 9));
 
 function dayIndex() {
   const now = new Date();
@@ -650,6 +651,17 @@ function setMsg(text, kind = '') {
   el.className = 'input-msg' + (kind ? ' ' + kind : '');
 }
 
+// Count letters a guess shares with the target (multiset intersection).
+function sharedLetterCount(a, b) {
+  const pool = b.split('');
+  let n = 0;
+  for (const ch of a) {
+    const i = pool.indexOf(ch);
+    if (i !== -1) { pool.splice(i, 1); n++; }
+  }
+  return n;
+}
+
 function attemptGuess() {
   if (state.complete) return;
   const raw = $('word-input').value.trim().toLowerCase();
@@ -688,7 +700,12 @@ function attemptGuess() {
     $('word-input').value = '';
     const rev = state.revealed[state.step];
     const hint = rev < word.length ? `hint: ${word.slice(0,rev).toUpperCase()}${'·'.repeat(word.length - rev)}` : 'no more hints!';
-    setMsg(`not quite — ${hint}`, 'err');
+    // "Warm" feedback: a guess that shares 3+ letters with the target is close.
+    if (sharedLetterCount(raw, word) >= 3) {
+      setMsg(`close — keep going · ${hint}`, 'warm');
+    } else {
+      setMsg(`not quite — ${hint}`, 'err');
+    }
     shakeInput();
     saveProgress();
     renderAll();
